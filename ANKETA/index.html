@@ -8,6 +8,8 @@
 </head>
 <body>
     <script>
+        "use strict"
+        
         var person = {
             "Last Name": '', 
             "First Name": '', 
@@ -45,7 +47,7 @@
 
                     value = prompt('Enter your'+' '+ key +':');
                     
-                } while (value===null || value.trim() === '');
+                } while (value === null || value.trim() === '');
 
                 person[key] = value;
             }

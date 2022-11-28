@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSHW3</title>
+</head>
+<body>
+    <script>
+
+        var person = {
+            "Last Name": '', 
+            "First Name": '', 
+            "Middle Name": '', 
+            Age: 0,  
+            Gender: false, 
+            Retired: false};
+
+        for (const key in person) {
+            if (key === 'Age') {
+
+                var age = person[key];
+
+                do{
+                    var value = prompt('Enter your'+' '+ key +' in years:');
+                    if (!isNaN(Number(value))) {
+                        age = Number(value);
+                    }
+                }while(age === 0 || age < 0)
+
+                person[key] = age;
+            }
+
+            else if (key === 'Gender'){
+                person[key] = confirm('Are you Male?')
+            }
+
+            else if(key === 'Retired')
+                person[key] = isRetired(person);
+
+            else{
+                var value = person[key];
+                do {
+                    value = prompt('Enter your'+' '+ key +':');
+                } while (value.trim() === '');
+
+                person[key] = value;
+            }
+            
+            
+        }
+
+        person.Retired = isRetired(person);
+
+        alert(
+            "Your full name is: " + person["Last Name"] + " " + person["First Name"] + " " + person["Middle Name"]+"\n"+
+            "Your age in years: " + person.Age +"\n"+
+            "Your age in days: " + (person.Age*365) + "\n"+
+            "Through 5 years your age will be: " +(person.Age+5)+"\n"+
+            "Your gender: " + (person.Gender === true ? "Male":"Female")+"\n"+
+            "You are retired: " + (person.Retired === true?"Yes":"No")
+        )
+
+        function isRetired(person){
+            if(person.Gender === true)
+                return (person.Age <= 65) ? false : true
+            else
+                return (person.Age <= 55) ? false : true
+        }
+    </script>
+</body>
+</html>

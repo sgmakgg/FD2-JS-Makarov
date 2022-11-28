@@ -42,8 +42,10 @@
                 var value = person[key];
                 
                 do {
+
                     value = prompt('Enter your'+' '+ key +':');
-                } while (value.trim() === '');
+                    
+                } while (value===null || value.trim() === '');
 
                 person[key] = value;
             }

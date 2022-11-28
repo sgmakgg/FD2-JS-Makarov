@@ -8,7 +8,6 @@
 </head>
 <body>
     <script>
-
         var person = {
             "Last Name": '', 
             "First Name": '', 
@@ -41,14 +40,13 @@
 
             else{
                 var value = person[key];
+                
                 do {
                     value = prompt('Enter your'+' '+ key +':');
                 } while (value.trim() === '');
 
                 person[key] = value;
             }
-            
-            
         }
 
         person.Retired = isRetired(person);

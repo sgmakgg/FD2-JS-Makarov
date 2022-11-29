@@ -15,45 +15,20 @@
             "First Name": '', 
             "Middle Name": '', 
             Age: 0,  
-            Gender: false, 
+            Gender: false,
             Retired: false};
 
-        for (const key in person) {
-            if (key === 'Age') {
+            person["Last Name"] = InitializeNameProperty("Last Name", person["Last Name"]);
 
-                var age = person[key];
+            person["First Name"] = InitializeNameProperty("First Name", person["First Name"]);
 
-                do{
-                    var value = prompt('Enter your'+' '+ key +' in years:');
-                    if (!isNaN(Number(value))) {
-                        age = Number(value);
-                    }
-                }while(age === 0 || age < 0)
+            person["Middle Name"] = InitializeNameProperty("Middle Name", person["Middle Name"]);
 
-                person[key] = age;
-            }
+            person.Age = InitializeAgeProperty("Age", person.Age);
 
-            else if (key === 'Gender'){
-                person[key] = confirm('Are you Male?')
-            }
+            person.Gender = confirm('Are you Male?');
 
-            else if(key === 'Retired')
-                person[key] = isRetired(person);
-
-            else{
-                var value = person[key];
-                
-                do {
-
-                    value = prompt('Enter your'+' '+ key +':');
-                    
-                } while (value === null || value.trim() === '');
-
-                person[key] = value;
-            }
-        }
-
-        person.Retired = isRetired(person);
+            person.Retired = isRetired(person)
 
         alert(
             "Your full name is: " + person["Last Name"] + " " + person["First Name"] + " " + person["Middle Name"]+"\n"+
@@ -63,6 +38,30 @@
             "Your gender: " + (person.Gender === true ? "Male":"Female")+"\n"+
             "You are retired: " + (person.Retired === true?"Yes":"No")
         )
+
+        function InitializeNameProperty(key, value){
+            var prop = value;
+                do {
+
+                    prop = prompt('Enter your'+' '+ key +':');
+                    
+                } while (prop === null || prop.trim() === '');
+
+                return prop;
+        }
+
+        function InitializeAgeProperty(key, value){
+            var age = value;
+
+                do{
+                    var value = prompt('Enter your'+' '+ key +' in years:');
+                    if (!isNaN(Number(value))) {
+                        age = Number(value);
+                    }
+                }while(age === 0 || age < 0)
+
+                return age;
+        }
 
         function isRetired(person){
             if(person.Gender === true)

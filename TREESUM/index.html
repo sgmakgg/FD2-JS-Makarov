@@ -11,19 +11,23 @@
           [ 9, [] ],
           1, 8
       ];
-      
 
-      function arraySummary(testArray, result = 0) {
-          for (let arrayKey = 0; arrayKey < testArray.length; arrayKey++) {
-              if(Array.isArray(testArray[arrayKey]))
-                  result += arraySummary(testArray[arrayKey]);
-              else
-                  result +=testArray[arrayKey];
+      var summary = 0;
+
+      function arraySummary(testArray) {
+          for (let i = 0; i < testArray.length; i++) {
+              if(Array.isArray(testArray[i])){
+                  arraySummary(testArray[i]);
+              }
+              else{
+                  summary += testArray[i];
+              }
           }
-          return result;
       }
 
-      console.log(arraySummary(testArray));
+      arraySummary(testArray);
+      console.log(summary);
+      
     </script>
 </body>
 </html>

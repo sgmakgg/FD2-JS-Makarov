@@ -3,38 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>COUNTRIES</title>
+    <script src="countriesDialog.js"></script>
 </head>
 <body>
-    <script>
-        var countrysH={};
-
-        function addCountry(countryName,capitalName) {
-            countrysH[countryName]=capitalName;
-        }
-
-        function deleteCountry(countryName) {
-            delete countrysH[countryName];
-        }
-
-        function getCountryInfo(countryName) {
-            if ( countryName in countrysH )
-                return 'страна: ' + countryName + ' столица: ' + countrysH[countryName] ;
-            else
-                return 'нет информации о стране ' + countryName + '!' ;
-        }
-
-        function listCountrys() {
-            var res="";
-            for ( var CN in countrysH )
-                res+='\n'+getCountryInfo(CN);
-            return res;
-        }
-
-        addCountry('Германия','Берлин');
-        addCountry('Венгрия','Будапешт');
-        addCountry('Франция','Париж');
-
-        console.log( "список стран:" + listCountrys() );
-    </script>
+    <input type="button" value="Add Country's capital" onclick="countryRequest()"> <br>
+    <input type="button" value="Check capital city" onclick="countryResponse()"> <br>
+    <input type="button" value="List of countries/capitals" onclick="getListCountrys()"> <br>
+    <input type="button" value="Delete country information" onclick="deleteCountryRequest()">
 </body>
 </html>

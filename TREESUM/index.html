@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script>
+      var testArray = [ 5, 7,
+          [ 4, [2], 8, [1,3], 2 ],
+          [ 9, [] ],
+          1, 8
+      ];
+
+      var result = 0;
+
+      function arraySummary(testArray) {
+          for (let arrayKey = 0; arrayKey < testArray.length; arrayKey++) {
+              if(Array.isArray(testArray[arrayKey]))
+                  arraySummary(testArray[arrayKey]);
+              else
+                  result +=testArray[arrayKey];
+          }
+          return result;
+      }
+
+      console.log(arraySummary(testArray));
+    </script>
+</body>
+</html>

@@ -11,13 +11,12 @@
           [ 9, [] ],
           1, 8
       ];
+      
 
-      var result = 0;
-
-      function arraySummary(testArray) {
+      function arraySummary(testArray, result = 0) {
           for (let arrayKey = 0; arrayKey < testArray.length; arrayKey++) {
               if(Array.isArray(testArray[arrayKey]))
-                  arraySummary(testArray[arrayKey]);
+                  result += arraySummary(testArray[arrayKey]);
               else
                   result +=testArray[arrayKey];
           }

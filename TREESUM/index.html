@@ -12,21 +12,20 @@
           1, 8
       ];
 
-      var summary = 0;
-
       function arraySummary(testArray) {
+          let summary=0;
           for (let i = 0; i < testArray.length; i++) {
               if(Array.isArray(testArray[i])){
-                  arraySummary(testArray[i]);
+                  summary += arraySummary(testArray[i]);
               }
               else{
                   summary += testArray[i];
               }
           }
+          return summary;
       }
-
-      arraySummary(testArray);
-      console.log(summary);
+      
+      console.log(arraySummary(testArray));
       
     </script>
 </body>

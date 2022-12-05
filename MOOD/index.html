@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mood</title>
+</head>
+<body>
+    <script>
+        "use strict";
+
+        function randomDiap(n,m) {
+            return Math.floor(Math.random()*(m-n+1))+n;
+        }
+
+        function mood(colorsCount) {
+
+            const colors = ['', 'красный',
+                'оранжевый', 'жёлтый',
+                'зелёный', 'голубой',
+                'синий', 'фиолетовый'];
+
+            let colorChecker = {
+                '': false, 'красный': false,
+                'оранжевый': false, 'жёлтый': false,
+                'зелёный': false, 'голубой': false,
+                'синий': false, 'фиолетовый': false
+            };
+
+            if(colorsCount > colors.length){
+                console.log("Количество запрошенных цветов: "
+                    + colorsCount
+                    + " не может быть больше количества цветов радуги: "
+                    + colors.length)
+                colorsCount = colors.length
+            }
+
+            console.log( 'цветов: ' + colorsCount );
+
+            for (let i = 1; i<=colorsCount; i++ ) {
+                let n = randomDiap(1, 7);
+                let colorName;
+
+                if(colorChecker[colors[n]] === false){
+                    colorChecker[colors[n]] = true;
+                    colorName=colors[n];
+                }
+                else
+                    for (const Key in colorChecker) {
+                        if(colorChecker[Key] === false)
+                        {
+                            colorChecker[Key] = true;
+                            colorName = Key;
+                            break;
+                        }
+                    }
+
+                console.log( colorName );
+            }
+        }
+
+        mood(9);
+    </script>
+</body>
+</html>

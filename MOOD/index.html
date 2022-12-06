@@ -26,38 +26,23 @@
                 'синий': false, 'фиолетовый': false
             };
 
-            if(colorsCount > colors.length){
-                console.log("Количество запрошенных цветов: "
-                    + colorsCount
-                    + " не может быть больше количества цветов радуги: "
-                    + colors.length)
-                colorsCount = colors.length
-            }
+            let counter = 0;
 
-            console.log( 'цветов: ' + colorsCount );
-
-            for (let i = 1; i<=colorsCount; i++ ) {
+            do {
                 let n = randomDiap(1, 7);
-                let colorName;
 
-                if(colorChecker[colors[n]] === false){
-                    colorChecker[colors[n]] = true;
-                    colorName=colors[n];
-                }
-                else
-                    for (const Key in colorChecker) {
-                        if(colorChecker[Key] === false && Key !== '')
-                        {
-                            colorChecker[Key] = true;
-                            colorName = Key;
-                            break;
-                        }
+                    if (colorChecker[colors[n]] === false)
+                    {
+                        colorChecker[colors[n]] = true;
+
+                        counter++;
+
+                        console.log(colors[n]);
+
                     }
+            } while (counter !== colorsCount) ;
 
-                console.log( colorName );
-            }
         }
-
         mood(3);
     </script>
 </body>

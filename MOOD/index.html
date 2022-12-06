@@ -46,7 +46,7 @@
                 }
                 else
                     for (const Key in colorChecker) {
-                        if(colorChecker[Key] === false)
+                        if(colorChecker[Key] === false && Key !== '')
                         {
                             colorChecker[Key] = true;
                             colorName = Key;

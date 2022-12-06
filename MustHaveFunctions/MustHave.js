@@ -29,3 +29,12 @@ function randomDiap(n,m) {
     return Math.floor(Math.random()*(m-n+1))+n;
 }
 
+// получение координат элемента относительно верхнего левого угла страницы
+function getElementPos(elem) {
+    var bbox=elem.getBoundingClientRect();
+    return {
+        left: bbox.left+window.pageXOffset,
+        top: bbox.top+window.pageYOffset
+    };
+}
+

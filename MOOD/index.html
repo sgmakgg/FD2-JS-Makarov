@@ -19,19 +19,14 @@
                 'зелёный', 'голубой',
                 'синий', 'фиолетовый'];
 
-            let colorChecker = {
-                '': false, 'красный': false,
-                'оранжевый': false, 'жёлтый': false,
-                'зелёный': false, 'голубой': false,
-                'синий': false, 'фиолетовый': false
-            };
+            let colorChecker = {};
 
             let counter = 0;
 
             do {
                 let n = randomDiap(1, 7);
 
-                    if (colorChecker[colors[n]] === false)
+                    if (!(colors[n] in colorChecker))
                     {
                         colorChecker[colors[n]] = true;
 

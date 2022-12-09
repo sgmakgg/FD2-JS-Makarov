@@ -7,31 +7,36 @@
 <body>
     <script>
         "use strict"
-        function stringMod() {
-            let result = prompt("Enter the string");
+
+        function stringMod(answer) {
             let startPos = 0;
             let endPos = 0;
 
-            for (let s = 0; s < result.length; s++) {
-                if (result.charAt(s) === ' ')
+            for (let s = 0; s < answer.length; s++) {
+                if (answer.charAt(s) === ' ')
                     startPos = s;
                 else
                     break;
             }
 
-            let diap = result.length - 1;
+            let diap = answer.length - 1;
             for (let e = diap; e >= 0; e--) {
-                if (result.charAt(e) === ' ')
+                if (answer.charAt(e) === ' ')
                     endPos = e;
                 else
                     break;
             }
 
-            result = result.substring(startPos+1, endPos);
-            alert(result.split(result).join('!' + result + '!'));
+            return answer.substring(startPos+1, endPos);
+
         }
 
-        stringMod();
+        let answer = prompt("Enter the string");
+
+        let result = stringMod(answer);
+
+        alert(result.split(result).join('!' + result + '!'));
+
     </script>
 </body>
 </html>

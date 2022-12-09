@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A2+</title>
+</head>
+<body>
+    <script>
+        "use strict"
+        function stringMod() {
+            let result = prompt("Enter the string");
+            let startPos = 0;
+            let endPos = 0;
+
+            for (let s = 0; s < result.length; s++) {
+                if (result.charAt(s) === ' ')
+                    startPos = s;
+                else
+                    break;
+            }
+
+            let diap = result.length - 1;
+            for (let e = diap; e >= 0; e--) {
+                if (result.charAt(e) === ' ')
+                    endPos = e;
+                else
+                    break;
+            }
+
+            result = result.substring(startPos+1, endPos);
+            alert(result.split(result).join('!' + result + '!'));
+        }
+
+        stringMod();
+    </script>
+</body>
+</html>

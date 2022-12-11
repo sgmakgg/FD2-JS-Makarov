@@ -9,8 +9,8 @@
         "use strict"
 
         function stringMod(answer) {
-            let startPos = 0;
-            let endPos = 0;
+            let startPos=null;
+            let endPos=null;
 
             for (let s = 0; s < answer.length; s++) {
                 if (answer.charAt(s) === ' ')
@@ -27,7 +27,14 @@
                     break;
             }
 
-            return answer.substring(startPos+1, endPos);
+            if(startPos === null && endPos == null)
+                return answer;
+            else if (startPos === null)
+                return answer.slice(0, endPos);
+            else if (endPos === null)
+                return answer.slice(startPos + 1, answer.length);
+            else
+                return answer.substring(startPos + 1, endPos);
 
         }
 

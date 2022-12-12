@@ -10,7 +10,7 @@
 
         function stringMod(answer) {
             let startPos=null;
-            let endPos=null;
+            let endPos=answer.length;
 
             for (let s = 0; s < answer.length; s++) {
                 if (answer.charAt(s) === ' ')
@@ -19,20 +19,15 @@
                     break;
             }
 
-            let diap = answer.length - 1;
-            for (let e = diap; e >= 0; e--) {
+            for (let e = (endPos - 1); e >= 0; e--) {
                 if (answer.charAt(e) === ' ')
-                    endPos = e;
+                    endPos--;
                 else
                     break;
             }
 
-            if(startPos === null && endPos == null)
-                return answer;
-            else if (startPos === null)
+            if (startPos === null)
                 return answer.slice(0, endPos);
-            else if (endPos === null)
-                return answer.slice(startPos + 1, answer.length);
             else
                 return answer.substring(startPos + 1, endPos);
 
@@ -42,7 +37,7 @@
 
         let result = stringMod(answer);
 
-        alert(result.split(result).join('!' + result + '!'));
+        alert('!' + result + '!');
 
     </script>
 </body>

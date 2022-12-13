@@ -19,14 +19,28 @@
                     break;
             }
 
+            if(startPos === (answer.length - 1)){
+                
+                answer = 'That was empty string';
+                console.log(answer);
+
+                return answer;
+            }
+
+
             for (let e = (endPos - 1); e >= 0; e--) {
                 if (answer.charAt(e) === ' ')
                     endPos--;
                 else
                     break;
             }
-            
-            return answer.substring(startPos + 1, endPos);
+
+            if(startPos === -1 && endPos === answer.length){
+                console.log('No blank charters in the start/end')
+                return answer;
+            }
+            else
+                return answer.substring(startPos + 1, endPos);
         }
 
         let answer = prompt("Enter the string");

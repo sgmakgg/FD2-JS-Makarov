@@ -38,3 +38,12 @@ function getElementPos(elem) {
     };
 }
 
+//Функция для получения реального имени класса объекта
+
+function getClassName(obj) {
+    if ( obj.constructor && obj.constructor.name )
+        return obj.constructor.name;
+    const c=Object.prototype.toString.apply(obj);
+    return c.substring(8,c.length-1);
+}
+

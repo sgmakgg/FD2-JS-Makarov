@@ -12,6 +12,11 @@
             let startPos = -1;
             let endPos= answer.length;
 
+            if(endPos === 0){
+                console.log('That was empty string');
+                return answer;
+            }
+
             for (let s = 0; s < answer.length; s++) {
                 if (answer.charAt(s) === ' ')
                     startPos = s;
@@ -20,10 +25,8 @@
             }
 
             if(startPos === (answer.length - 1)){
-                
-                console.log('That was empty string');
-
-                return answer;
+                console.log('There were only blank charters');
+                return answer.substring(startPos + 1, endPos);
             }
 
 

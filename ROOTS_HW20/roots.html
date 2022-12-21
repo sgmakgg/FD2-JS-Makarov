@@ -21,6 +21,9 @@
         if ( d==0 )
             return [ -b/(2*a) ]; // один корень
 
+        if ( a === 0 ) // линейное уравнение
+            return [ -c/b ];
+
         const x1=(-b+Math.sqrt(d))/(2*a);
         const x2=(-b-Math.sqrt(d))/(2*a);
         return [ x1, x2 ]; // два корня

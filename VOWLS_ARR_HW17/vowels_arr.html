@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vowels_ARR</title>
+    <script src="forEach.js"></script>
+    <script src="filter.js"></script>
+    <script src="reduce.js"></script>
+</head>
+<body>
+  <script>
+      "use strict"
+
+    let answer = '';
+
+    do {
+      answer = prompt("Enter word or subject")
+    } while (answer === '' || answer.trim() === '');
+
+    console.log('FOREACH: ' + vowelsCounterForEach(answer));
+
+    console.log('FILTER: ' + vowelsCounterFilter(answer));
+
+    console.log('REDUCE: ' + vowelsCounterReduce(answer));
+
+  </script>
+</body>
+</html>

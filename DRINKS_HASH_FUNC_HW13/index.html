@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DRINKS_HASH_FUNC</title>
+</head>
+<body>
+    <script>
+        'use strict'
+
+        function HashStorageFunc(){
+
+            const self = this;
+
+            let _recipes = {};
+
+            self.addValue = function (key, value){
+
+            }
+
+            self.getValue = function (key){
+                return _recipes[key];
+            }
+
+            self.deleteValue = function (key){
+
+                if(key in _recipes){
+                    delete _recipes[key];
+                    return true;
+                }
+
+                return false;
+            }
+
+            self.getKeys = function(){
+                let arr = [];
+                for (const recipesKey in _recipes) {
+                    arr.push(recipesKey);
+                }
+                return arr;
+            }
+        }
+    </script>
+</body>
+</html>

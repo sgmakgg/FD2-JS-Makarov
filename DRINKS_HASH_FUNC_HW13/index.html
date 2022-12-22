@@ -43,7 +43,16 @@
 
         let drinkStorage = new HashStorageFunc();
 
+        drinkStorage.addValue("Tomato juice", {'alcohol free': 'tomato'});
+        drinkStorage.addValue("Rom", 'sugar cane');
 
+        console.log(drinkStorage.getKeys());
+
+        console.log(drinkStorage.getValue("Rom"));
+
+        console.log(drinkStorage.deleteValue("Rom"));
+
+        console.log(drinkStorage.getValue("Rom"));
     </script>
 </body>
 </html>

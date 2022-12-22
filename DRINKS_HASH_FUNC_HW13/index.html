@@ -15,7 +15,7 @@
             let _recipes = {};
 
             self.addValue = function (key, value){
-
+                _recipes[key] = value;
             }
 
             self.getValue = function (key){
@@ -40,6 +40,10 @@
                 return arr;
             }
         }
+
+        let drinkStorage = new HashStorageFunc();
+
+
     </script>
 </body>
 </html>

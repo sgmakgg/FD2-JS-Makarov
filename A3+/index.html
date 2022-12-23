@@ -7,6 +7,8 @@
 <body>
     <script>
       function palindromeChecker(str) {
+          if(str === '' || str.length <= 2)
+              return "это не палиндром";
 
           let checkPattern = /[\u0020-\u002F\u003A-\u003F\u044A\u044C\s]/g;
 
@@ -14,11 +16,16 @@
 
           result = result.replace(checkPattern,'');
 
-          let reversedResult = result.split('').reverse().join('');
+          for (let i = 0; i < result.length; i++) {
 
-          if(result.localeCompare(reversedResult) === 0)
-              return "это палиндром";
-          return "это не палиндром";
+              let startLetter = result.charAt(i);
+              let endLetter = result.charAt((result.length - 1) - i);
+
+              if(!(startLetter === endLetter))
+                  return "это не палиндром";
+              else if(i > result.length/2)
+                  return "это палиндром";
+          }
       }
 
       let str = prompt("Введите строку");

@@ -21,7 +21,7 @@
               let startLetter = result.charAt(i);
               let endLetter = result.charAt((result.length - 1) - i);
 
-              if(!(startLetter === endLetter))
+              if(startLetter !== endLetter)
                   return "это не палиндром";
               else if(i > result.length/2)
                   return "это палиндром";

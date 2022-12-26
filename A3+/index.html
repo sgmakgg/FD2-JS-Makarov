@@ -8,7 +8,7 @@
     <script>
       function palindromeChecker(str) {
           if(str === '' || str.length <= 2)
-              return "это не палиндром";
+              return false;
 
           let checkPattern = /[\u0020-\u002F\u003A-\u003F\u044A\u044C\s]/g;
 
@@ -16,7 +16,7 @@
 
           result = result.replace(checkPattern,'');
 
-          for (let i = 0; i < (result.length/2); i++) {
+          for (let i = 0; i <= (result.length/2); i++) {
 
               let startLetter = result.charAt(i);
               let endLetter = result.charAt((result.length - 1) - i);

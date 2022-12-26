@@ -3,55 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>DRINKS_HASH_CLASS</title>
+    <script src="dialog.js"></script>
 </head>
 <body>
-  <script>
-    'use strict'
+    <div>
+        <input type="button" value="Ввод информации о напитке" onclick="setDrinkInfo()">
 
-    class HashStorageClass {
-        constructor() {
-            this.recipes = {};
-        }
+        <input type="button" value="Получение информации о напитке" onclick="getDrinkInfo()">
 
-        addValue(key, value){
-            this.recipes[key] = value;
-        }
+        <input type="button" value="Удаление информации о напитке" onclick="deleteDrinkInfo()">
 
-        getValue(key){
-            return this.recipes[key];
-        }
+        <input type="button" value="Перечень всех напитков" onclick="drinksList()">
 
-        deleteValue(key){
-
-            if(key in this.recipes){
-                delete this.recipes[key];
-                return true;
-            }
-
-            return false;
-        }
-
-        getKeys(){
-            let arr = [];
-            for (const recipesKey in this.recipes) {
-                arr.push(recipesKey);
-            }
-            return arr;
-        }
-    }
-
-    let drinkStorage = new HashStorageClass();
-
-    drinkStorage.addValue("Tomato juice", {'alcohol free': 'tomato'});
-    drinkStorage.addValue("Rom", 'sugar cane');
-
-    console.log(drinkStorage.getKeys());
-
-    console.log(drinkStorage.getValue("Rom"));
-
-    console.log(drinkStorage.deleteValue("Rom"));
-
-    console.log(drinkStorage.getValue("Rom"));
-  </script>
+    </div>
 </body>
 </html>

@@ -16,21 +16,21 @@
 
           result = result.replace(checkPattern,'');
 
-          for (let i = 0; i < result.length; i++) {
+          for (let i = 0; i < (result.length/2); i++) {
 
               let startLetter = result.charAt(i);
               let endLetter = result.charAt((result.length - 1) - i);
 
               if(startLetter !== endLetter)
-                  return "это не палиндром";
-              else if(i > result.length/2)
-                  return "это палиндром";
+                  return false;
           }
+
+          return true;
       }
 
       let str = prompt("Введите строку");
 
-      alert(palindromeChecker(str));
+      alert(palindromeChecker(str) ? "это палиндром" : "это не палиндром");
 
     </script>
 </body>

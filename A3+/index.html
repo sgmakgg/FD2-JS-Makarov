@@ -7,8 +7,8 @@
 <body>
     <script>
       function palindromeChecker(str) {
-          if(str === '' || str.length <= 2)
-              return false;
+          if(str.length < 2)
+              return true;
 
           let checkPattern = /[\u0020-\u002F\u003A-\u003F\u044A\u044C\s]/g;
 

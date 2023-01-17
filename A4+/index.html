@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A3+</title>
+</head>
+<body>
+    <script>
+      function palindromeChecker(str) {
+          if(str.length < 2)
+              return true;
+
+          let checkPattern = /[\u0020-\u002F\u003A-\u003F\u044A\u044C\s]/g;
+
+          let result = str.toLowerCase().replace(/ё/g, 'е');
+
+          result = result.replace(checkPattern,'');
+
+
+          return checkWithRecursion(result);
+      }
+
+      function checkWithRecursion(preparedString) {
+          if(preparedString.length < 2)
+              return true;
+
+          let startLetter = preparedString.charAt(0);
+          let endLetter = preparedString.charAt((preparedString.length - 1));
+
+          return startLetter !== endLetter ? false : checkWithRecursion(preparedString.substring(1, (preparedString.length - 1)));
+      }
+
+      let str = prompt("Введите строку");
+
+      alert(palindromeChecker(str) ? "это палиндром" : "это не палиндром");
+
+    </script>
+</body>
+</html>

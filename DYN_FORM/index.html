@@ -5,13 +5,15 @@
     <title>DYN_FORM</title>
 </head>
 <body>
+    <script src="dyn_form.js"></script>
 
-    <form name="dForm1" action=" https://fe.it-academy.by/TestForm.php"></form>
-    <form name="dForm2" action=" https://fe.it-academy.by/TestForm.php"></form>
+    <form name="formDef1" action=" https://fe.it-academy.by/TestForm.php"></form>
+
+    <br><hr><br>
+
+    <form name="formDef2" action=" https://fe.it-academy.by/TestForm.php"></form>
 
     <script>
-        'use strict'
-
         var formDef1=
             [
                 {label:'Название сайта:',kind:'longtext',name:'sitename'},
@@ -35,80 +37,8 @@
                 {caption:'Зарегистрироваться',kind:'submit'},
             ];
 
-        function formBuilder(formData, formElement){
-
-            for (let item of formData){
-                const labelTag = document.createElement('label');
-                const inputTag = document.createElement('input');
-                const brTag = document.createElement('br');
-
-                if (item.kind.localeCompare('longtext') === 0) {
-                    labelTag.innerHTML = item.label;
-                    inputTag.type = 'text';
-                    inputTag.name = item.name;
-                    formElement.appendChild(labelTag);
-                    formElement.appendChild(inputTag);
-                    formElement.appendChild(brTag);
-                }
-
-                else if (item.kind.localeCompare('number') === 0){
-                    labelTag.innerHTML = item.label;
-                    inputTag.type = 'number';
-                    inputTag.name = item.name;
-                    formElement.appendChild(labelTag);
-                    formElement.appendChild(inputTag);
-                    formElement.appendChild(brTag);
-                }
-
-                else if (item.kind.localeCompare('shorttext') === 0){
-                    labelTag.innerHTML = item.label;
-                    inputTag.type = 'email';
-                    inputTag.name = item.name;
-                    formElement.appendChild(labelTag);
-                    formElement.appendChild(inputTag);
-                    formElement.appendChild(brTag);
-                }
-
-                else if (item.kind.localeCompare('combo') === 0){
-                    let selectTag = document.createElement('select');
-
-                    labelTag.innerHTML = item.label;
-                    selectTag.name= item.name;
-
-                    item.variants.forEach(varElement =>{
-                        let optionTag = document.createElement('option');
-                        optionTag.text = varElement.text;
-                        optionTag.value = varElement.value;
-                        selectTag.appendChild(optionTag)
-                    })
-
-                    formElement.appendChild(labelTag);
-                    formElement.appendChild(selectTag);
-                    formElement.appendChild(brTag);
-                }
-
-                else if (item.kind.localeCompare('radio') === 0){
-                    labelTag.innerHTML = item.label;
-                    formElement.appendChild(labelTag);
-
-                    item.variants.forEach(varElement =>{
-                        let inputCheckBox = document.createElement('input');
-                        let labelCheckBox = document.createElement('label');
-                        
-                        inputCheckBox.type = 'radio';
-                        inputCheckBox.name = varElement.name;
-                        inputCheckBox.value = varElement.value;
-                        formElement.appendChild(inputCheckBox);
-                        labelCheckBox.innerHTML = varElement.text;
-                        formElement.appendChild(labelCheckBox);
-                    })
-
-                    formElement.appendChild(brTag);
-                }
-            }
-        }
-
-        formBuilder(formDef1, document.forms['dForm1']);
+        formBuilder(formDef1, document.forms['formDef1']);
+        formBuilder(formDef2, document.forms['formDef2']);
     </script>
 
 </body>

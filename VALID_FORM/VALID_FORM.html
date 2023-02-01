@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VALID_FORM</title>
+</head>
+<body>
+    <h3>Для внесения вашего сайта в каталог, заполните форму:</h3>
+
+    <form name="validForm" action="https://fe.it-academy.by/TestForm.php">
+        <label>Разработчики: <input type="text" name="developers" id="dev" /> </label> <span></span><br>
+        <label>Название сайта: <input type="text" name="siteName" id="sn" /> </label> <span></span><br>
+        <label>URL сайта: <input type="text" name="siteName" id="url" /> </label> <span></span><br>
+        <label>Дата запуска сайта: <input type="date" name="openedSince" id="openDate" /> </label> <span></span><br>
+        <label>Посетителей в сутки: <input type="number" name="visitorsPerDay" id="visitors" /> </label> <span></span><br>
+        <label>E-mail для связи: <input type="email" name="email" id="email" /> </label> <span></span><br>
+        <label>Рубрика каталога:
+            <select name="catalog" id="catalog">
+                <option value="1">здоровье</option>
+                <option value="2">домашний уют</option>
+                <option value="3">бытовая техника</option>
+            </select>
+        </label><span></span><br>
+        <label id="layoutGroup">Размещение:
+            <label><input type="radio" name="layout"/>бесплатное</label> <span></span>
+            <label><input type="radio" name="layout"/>платное</label> <span></span>
+            <label><input type="radio" name="layout"/>VIP</label> <span></span>
+        </label> <span></span><br>
+        <label>Разрешить отзывы: <input type="checkbox" name="review" id="review" value="no"/> </label> <span></span><br>
+        <label>Описание сайта:<br>
+            <textarea name="description" id="description" ></textarea>
+        </label> <span></span><br>
+        <button type="submit">Опубликовать</button>
+    </form>
+</body>
+</html>

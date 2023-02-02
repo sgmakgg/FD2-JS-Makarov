@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VALID_FORM</title>
+    <style>
+        span{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h3>Для внесения вашего сайта в каталог, заполните форму:</h3>
+
+    <form name="validForm" action="https://fe.it-academy.by/TestForm.php" id="VFORM">
+        <label>Разработчики:
+            <input type="text" name="developers" id="DEV"/>
+            <span></span>
+        </label><br>
+        <label>Название сайта:
+            <input type="text" name="siteName" id="SN" />
+            <span></span>
+        </label><br>
+        <label>URL сайта:
+            <input type="text" name="siteName" id="URL" />
+            <span></span>
+            </label><br>
+        <label>Дата запуска сайта:
+            <input type="date" name="openedSince" id="OPENED" />
+            <span></span>
+        </label><br>
+        <label>Посетителей в сутки:
+            <input type="number" name="visitorsPerDay" id="VISITORS" />
+            <span></span>
+        </label><br>
+        <label>E-mail для связи:
+            <input type="email" name="email" id="EMAIL" />
+            <span></span>
+        </label><br>
+        <label>Рубрика каталога:
+            <select name="catalog" id="CATALOG">
+                <option value="1">здоровье</option>
+                <option value="2">домашний уют</option>
+                <option value="3">бытовая техника</option>
+            </select>
+            <span></span>
+        </label><br>
+        <label id="RADIOGROUP">Размещение:
+            <label><input type="radio" name="layout"/>бесплатное</label> <span></span>
+            <label><input type="radio" name="layout"/>платное</label> <span></span>
+            <label><input type="radio" name="layout"/>VIP</label> <span></span>
+        </label> <span></span><br>
+        <label>Разрешить отзывы:
+            <input type="checkbox" name="review" id="REVIEW" value="yes"/>
+            <span></span>
+        </label><br>
+        <label>Описание сайта:<br>
+            <textarea name="description" id="DESCRIPTION" ></textarea>
+            <span></span>
+        </label><br>
+        <button type="submit">Опубликовать</button>
+    </form>
+    <script src="validation.js"></script>
+
+    <script>
+        let formsParams = [
+            {id: 'DEV', eventName: 'blur', validationError: false},
+            {id: 'SN', eventName: 'blur', validationError: false},
+            {id: 'URL', eventName: 'blur', validationError: false},
+            {id: 'OPENED', eventName: 'blur', validationError: false},
+            {id: 'VISITORS', eventName: 'blur', validationError: false},
+            {id: 'EMAIL', eventName: 'blur', validationError: false},
+            {id: 'CATALOG', eventName: 'blur', validationError: false},
+            {id: 'RADIOGROUP', eventName: 'click', validationError: false},
+            {id: 'REVIEW', eventName: 'click', validationError: false},
+            {id: 'DESCRIPTION', eventName: 'blur', validationError: false},
+            {id: 'VFORM', eventName: 'submit', validationError: false}
+        ]
+
+        formsParams.forEach(
+            (item)=>addListenerToFormsElem(item.id, item.eventName)
+        );
+
+        submitValidation();
+
+    </script>
+</body>
+</html>

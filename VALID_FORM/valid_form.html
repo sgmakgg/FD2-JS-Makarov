@@ -70,9 +70,9 @@
             {id: 'OPENED', eventName: 'blur', validationError: false},
             {id: 'VISITORS', eventName: 'blur', validationError: false},
             {id: 'EMAIL', eventName: 'blur', validationError: false},
-            {id: 'CATALOG', eventName: 'blur', validationError: false},
-            {id: 'RADIOGROUP', eventName: 'click', validationError: false},
-            {id: 'REVIEW', eventName: 'click', validationError: false},
+            {id: 'CATALOG', eventName: 'change', validationError: false},
+            {id: 'RADIOGROUP', eventName: 'change', validationError: false},
+            {id: 'REVIEW', eventName: 'change', validationError: false},
             {id: 'DESCRIPTION', eventName: 'blur', validationError: false},
             {id: 'VFORM', eventName: 'submit', validationError: false}
         ]
@@ -80,8 +80,6 @@
         formsParams.forEach(
             (item)=>addListenerToFormsElem(item.id, item.eventName)
         );
-
-        submitValidation();
 
     </script>
 </body>

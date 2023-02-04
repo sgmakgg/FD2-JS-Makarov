@@ -59,6 +59,14 @@ function formatDateTime(dt) {
         + str0l(hours,2) + ':' + str0l(minutes,2) + ':' + str0l(seconds,2);
 }
 
+// дополняет строку val слева нулями до длины Len
+function str0l(val,len) {
+    let strVal=val.toString();
+    while ( strVal.length < len )
+        strVal='0'+strVal;
+    return strVal;
+}
+
 // функция позволяет установить обработчик func,
 // который не срабатывает слишком часто -
 // если immediate=false - func будет вызван в конце серии событий,

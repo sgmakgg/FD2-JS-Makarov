@@ -47,3 +47,39 @@ function getClassName(obj) {
     return c.substring(8,c.length-1);
 }
 
+// форматирует дату-время в формате дд.мм.гггг чч:мм:сс
+function formatDateTime(dt) {
+    const year=dt.getFullYear();
+    const month=dt.getMonth()+1;
+    const day=dt.getDate();
+    const hours=dt.getHours();
+    const minutes=dt.getMinutes();
+    const seconds=dt.getSeconds();
+    return str0l(day,2) + '.' + str0l(month,2) + '.' + year + ' '
+        + str0l(hours,2) + ':' + str0l(minutes,2) + ':' + str0l(seconds,2);
+}
+
+// функция позволяет установить обработчик func,
+// который не срабатывает слишком часто -
+// если immediate=false - func будет вызван в конце серии событий,
+// если immediate=true - func будет вызван в начале серии событий
+// серия событий - последовательность событий,
+// интервалы между которыми не превыщают interval миллисекунд
+function debounceSerie(func,interval,immediate) {
+    let timer;
+    return function() {
+        let context=this, args=arguments;
+        let later=function() {
+            timer=null;
+            if ( !immediate )
+                func.apply(context,args);
+        };
+        let callNow=immediate&&!timer;
+        clearTimeout(timer);
+        timer=setTimeout(later,interval);
+        if ( callNow )
+            func.apply(context,args);
+    };
+}
+
+

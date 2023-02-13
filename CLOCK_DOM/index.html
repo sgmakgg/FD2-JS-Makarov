@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CLOCK_DOM</title>
+    <style>
+        body{
+            margin: 0;
+        }
+        .clockFace{
+            border-radius: 50%;
+            background-color: yellow;
+            display: none;
+        }
+        .startMenu{
+            display: block;
+        }
+        .hourNode{
+            position: absolute;
+            background-color: green;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center; /* align horizontal */
+            align-items: center; /* align vertical */
+            font-weight: bold;
+        }
+
+        #hourHand,
+        #minuteHand,
+        #secondHand {
+            position: absolute;
+            background: black;
+            border-radius: 10px;
+            opacity: 0.8;
+        }
+
+        #hourHand {
+            width: 14px;
+        }
+
+        #minuteHand {
+            width: 8px;
+        }
+
+        #secondHand {
+            width: 2px;
+            z-index: 10;
+        }
+
+        #digitalClock{
+            position: absolute;
+            text-align: center;
+            border-color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        'use strict'
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('readyButton').disabled = false
+        });
+
+        function clockStarter(){
+            const clockFaceDiameter = document.getElementById('diameter').value;
+
+            let elem = document.getElementsByClassName('startMenu').item(0);
+            elem.style.display = 'none';
+
+            elem = document.getElementsByClassName('clockFace').item(0);
+
+            elem.style.width = clockFaceDiameter + 'px';
+            elem.style.height = clockFaceDiameter + 'px';
+            elem.style.display = 'block';
+
+            const clockFaceCenterX = elem.offsetLeft + (clockFaceDiameter/2);
+            const clockFaceCenterY = elem.offsetTop + (clockFaceDiameter/2);
+
+            for (let i = 12; i >= 1; i--) {
+                let divNode = document.createElement('div');
+
+                let textNode = document.createTextNode(i.toString());
+                divNode.appendChild(textNode);
+                divNode.classList.add('hourNode');
+                divNode.style.width = (clockFaceDiameter/10) + 'px';
+                divNode.style.height = (clockFaceDiameter/10) + 'px';
+
+                const hourInRadians = 360/12*i/180*Math.PI;
+                const radiusForHoursDivs = (clockFaceDiameter/2) - (clockFaceDiameter/10);
+
+                const divNodeX = (clockFaceCenterX + (radiusForHoursDivs*Math.sin(hourInRadians))) - ((clockFaceDiameter/10)/2);
+                const divNodeY = (clockFaceCenterY - (radiusForHoursDivs*Math.cos(hourInRadians))) - ((clockFaceDiameter/10)/2);
+
+                divNode.style.left = divNodeX + 'px';
+                divNode.style.top = divNodeY + 'px';
+
+                elem.appendChild(divNode);
+            }
+
+            const hr = document.getElementById('hourHand');
+            hr.style.height = clockFaceDiameter/4 + 'px';
+            hr.style.left = (clockFaceCenterX - (hr.offsetWidth/2)) +'px';
+            hr.style.top = (clockFaceCenterY - hr.offsetHeight) +'px';
+
+            const min = document.getElementById('minuteHand');
+            min.style.height = clockFaceDiameter/3 + 'px';
+            min.style.left = (clockFaceCenterX - (min.offsetWidth/2)) +'px';
+            min.style.top = (clockFaceCenterY - min.offsetHeight) +'px';
+
+            const sec = document.getElementById('secondHand');
+            sec.style.height = (clockFaceDiameter/2 - clockFaceDiameter/10) + 'px';
+            sec.style.left = (clockFaceCenterX - (sec.offsetWidth/2)) +'px';
+            sec.style.top = (clockFaceCenterY - sec.offsetHeight) +'px';
+
+            const digitalClock = document.getElementById('digitalClock');
+            digitalClock.style.width = clockFaceDiameter/4 + 'px';
+            digitalClock.style.height = 'auto';
+            digitalClock.style.left = (clockFaceCenterX - clockFaceDiameter/8) + 'px';
+            digitalClock.style.top = (clockFaceCenterY/2) + 'px';
+            digitalClock.style.fontSize = clockFaceDiameter/15 + 'px';
+
+            
+
+            const TRANSFORMORIGINPOSITION = '50% 100%';
+
+            hr.style.transformOrigin = TRANSFORMORIGINPOSITION;
+            min.style.transformOrigin = TRANSFORMORIGINPOSITION;
+            sec.style.transformOrigin = TRANSFORMORIGINPOSITION;
+
+            function handsPosition(){
+                const oneMinOrSecDegree = 6;
+                let day = new Date();
+                let hh = day.getHours();
+                let mm = day.getMinutes();
+                let ss = day.getSeconds();
+                let milliSeconds = day.getMilliseconds();
+
+                digitalClock.innerHTML = updateTime(hh) + ':' + updateTime(mm) + ':' + updateTime(ss);
+
+                hr.style.transform = `rotate(${(hh*30)+((mm/12)*oneMinOrSecDegree)}deg)`;
+                min.style.transform = `rotate(${mm*oneMinOrSecDegree}deg)`;
+                sec.style.transform = `rotate(${ss*oneMinOrSecDegree}deg)`;
+                setTimeout( handsPosition, 1010 - milliSeconds);
+            }
+
+
+
+            handsPosition();
+
+            function updateTime(clockDigit) {
+                if (clockDigit < 10) {
+                    return "0" + clockDigit;
+                }
+                else {
+                    return clockDigit;
+                }
+            }
+
+        }
+
+    </script>
+
+    <div class="startMenu">
+        <label for="diameter">Введите диаметр циферблата (между 200 и 800): </label>
+        <input type="number" name="diameter" id="diameter" min="200" max="800"><br>
+        <input type="button" id="readyButton" value="Готово" onclick="clockStarter()" disabled>
+    </div>
+
+    <div class="clockFace">
+        <div id="hourHand">
+
+        </div>
+        <div id="minuteHand">
+
+        </div>
+        <div id="secondHand">
+
+        </div>
+        <div id="digitalClock"></div>
+    </div>
+
+</body>
+</html>

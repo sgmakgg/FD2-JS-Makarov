@@ -49,8 +49,9 @@
 
         window.addEventListener('mousemove', mouseMoveProcessor, false);
 
-
         document.body.style.cursor = 'grabbing';
+
+        document.addEventListener('mouseup', mouseUpProcessor, false);
       }
 
       function mouseMoveProcessor(eo){
@@ -62,7 +63,6 @@
 
         currentImage.style.left = (eo.pageX - offsetX) + 'px';
         currentImage.style.top = (eo.pageY - offsetY) + 'px';
-        currentImage.addEventListener('mouseup', mouseUpProcessor, false);
       }
 
       function mouseUpProcessor(eo) {

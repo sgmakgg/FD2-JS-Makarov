@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CLOCK_SVG</title>
+  <style>
+    body{
+      margin: 0;
+    }
+
+    svg * {
+      transform-box: fill-box;
+    }
+
+    #startMenu{
+      display: block;
+    }
+
+    #clockFaceSVG{
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    'use strict'
+    const SVGNS = "http://www.w3.org/2000/svg";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('readyButton').disabled = false
+    });
+
+    function clockStarter(){
+      const clockFaceDiameter = document.getElementById('diameter').value;
+
+      let elem = document.getElementById('startMenu');
+      elem.style.display = 'none';
+
+      let elemSVG = document.getElementById('clockFaceSVG');
+      elemSVG.style.display = 'block';
+      elemSVG.style.width = clockFaceDiameter + 'px';
+      elemSVG.style.height = clockFaceDiameter + 'px';
+
+      const clockFaceCenterX = elemSVG.scrollLeft + (clockFaceDiameter/2);
+      const clockFaceCenterY = elemSVG.scrollTop + (clockFaceDiameter/2);
+
+      let clockFaceCircle =
+              drawCircleSVG(clockFaceCenterX, clockFaceCenterY, (clockFaceDiameter/2), 'yellow')
+
+      elemSVG.appendChild(clockFaceCircle);
+
+      for (let i = 12; i >= 1; i--) {
+        const hourInRadians = degreesToRadians(360/12*i);
+        const radiusForCentersOfHoursCircle = (clockFaceDiameter/2) - (clockFaceDiameter/10);
+
+        let circleCenterX = (clockFaceCenterX + (radiusForCentersOfHoursCircle*Math.sin(hourInRadians)));
+        let circleCenterY = (clockFaceCenterY - (radiusForCentersOfHoursCircle*Math.cos(hourInRadians)));
+
+        let hoursCircle =
+                drawCircleSVG(circleCenterX, circleCenterY, clockFaceDiameter/20, 'green');
+        elemSVG.appendChild(hoursCircle);
+
+        const text = document.createElementNS(SVGNS,'text');
+          text.style.fontSize = clockFaceDiameter/15 + 'px';
+          text.style.fontWeight = 'bold';
+          text.textContent = i.toString();
+          text.style.textAnchor = 'middle';
+          text.setAttributeNS(null, 'textLength', (clockFaceDiameter/16).toString());
+          text.setAttributeNS(null, 'x', circleCenterX.toString());
+          text.setAttributeNS(null, 'y', (circleCenterY + clockFaceDiameter/60).toString());
+        elemSVG.appendChild(text);
+      }
+
+      const digitalClock = document.createElementNS(SVGNS,'text');
+        digitalClock.style.fontSize = clockFaceDiameter/15 + 'px';
+        digitalClock.style.fontWeight = 'bold';
+        digitalClock.textContent = 'hh:mm:sec';
+        digitalClock.style.textAnchor = 'middle';
+        digitalClock.setAttributeNS(null, 'textLength', (clockFaceDiameter/4).toString());
+        digitalClock.setAttributeNS(null, 'x', clockFaceCenterX.toString());
+        digitalClock.setAttributeNS(null, 'y', (clockFaceCenterX - clockFaceDiameter/4).toString());
+      elemSVG.appendChild(digitalClock);
+
+      const hr = document.createElementNS(SVGNS,'line');
+        hr.setAttributeNS(null, 'id', 'hr');
+        hr.setAttributeNS(null, 'x1', clockFaceCenterX.toString());
+        hr.setAttributeNS(null, 'y1', clockFaceCenterY.toString());
+        hr.setAttributeNS(null, 'x2', clockFaceCenterX.toString());
+        hr.setAttributeNS(null, 'y2', (clockFaceCenterY - clockFaceDiameter/4).toString());
+        hr.setAttributeNS(null, 'stroke', 'black');
+        hr.setAttributeNS(null, 'stroke-width', '14');
+        hr.setAttributeNS(null, 'stroke-linecap', 'round');
+      elemSVG.appendChild(hr);
+
+      const min = document.createElementNS(SVGNS,'line');
+        min.setAttributeNS(null, 'id', 'min');
+        min.setAttributeNS(null, 'x1', clockFaceCenterX.toString());
+        min.setAttributeNS(null, 'y1', clockFaceCenterY.toString());
+        min.setAttributeNS(null, 'x2', clockFaceCenterX.toString());
+        min.setAttributeNS(null, 'y2', (clockFaceCenterY - clockFaceDiameter/3).toString());
+        min.setAttributeNS(null, 'stroke', 'black');
+        min.setAttributeNS(null, 'stroke-width', '8');
+        min.setAttributeNS(null, 'stroke-linecap', 'round');
+      elemSVG.appendChild(min);
+
+      const sec = document.createElementNS(SVGNS,'line');
+      sec.setAttributeNS(null, 'id', 'sec');
+      sec.setAttributeNS(null, 'x1', clockFaceCenterX.toString());
+      sec.setAttributeNS(null, 'y1', clockFaceCenterY.toString());
+      sec.setAttributeNS(null, 'x2', clockFaceCenterX.toString());
+      sec.setAttributeNS(null, 'y2', (clockFaceDiameter/10).toString());
+      sec.setAttributeNS(null, 'stroke', 'blue');
+      sec.setAttributeNS(null, 'stroke-width', '4');
+      sec.setAttributeNS(null, 'stroke-linecap', 'round');
+      elemSVG.appendChild(sec);
+
+      const TRANSFORMORIGINPOSITION = '50% 100%';
+
+      hr.style.transformOrigin = TRANSFORMORIGINPOSITION;
+      min.style.transformOrigin = TRANSFORMORIGINPOSITION;
+      sec.style.transformOrigin = TRANSFORMORIGINPOSITION;
+
+      function handsPosition(){
+        const oneMinOrSecDegree = 6;
+        let day = new Date();
+        let hh = day.getHours();
+        let mm = day.getMinutes();
+        let ss = day.getSeconds();
+        let milliSeconds = day.getMilliseconds();
+
+        digitalClock.textContent = `${updateTime(hh)}:${updateTime(mm)}:${updateTime(ss)}`;
+
+        hr.style.transform = `rotate(${(hh*30)+((mm/12)*oneMinOrSecDegree)}deg)`;
+        min.style.transform = `rotate(${mm*oneMinOrSecDegree}deg)`;
+        sec.style.transform = `rotate(${ss*oneMinOrSecDegree}deg)`;
+        setTimeout( handsPosition, 1010 - milliSeconds);
+      }
+
+      handsPosition();
+    }
+
+    function drawCircleSVG(centerCoordinateX, centerCoordinateY, radius, color){
+      const circle = document.createElementNS(SVGNS,'circle');
+        circle.setAttributeNS(null, 'stroke', color);
+        circle.setAttributeNS(null, 'fill', color);
+        circle.setAttributeNS(null, 'cx', centerCoordinateX.toString());
+        circle.setAttributeNS(null, 'cy', centerCoordinateY.toString());
+        circle.setAttributeNS(null, 'r', radius.toString());
+
+      return circle;
+    }
+
+    function degreesToRadians(degrees) {
+      return degrees * (Math.PI / 180);
+    }
+
+    function updateTime(clockDigit) {
+      if (clockDigit < 10) {
+        return '0' + clockDigit;
+      }
+      else {
+        return clockDigit;
+      }
+    }
+  </script>
+
+  <div id="startMenu">
+    <label for="diameter">Введите диаметр циферблата (между 200 и 800): </label>
+    <input type="number" name="diameter" id="diameter" min="200" max="800"><br>
+    <input type="button" id="readyButton" value="Готово" onclick="clockStarter()" disabled>
+  </div>
+
+  <svg id="clockFaceSVG" xmlns='http://www.w3.org/2000/svg'>
+    
+  </svg>
+</body>
+</html>

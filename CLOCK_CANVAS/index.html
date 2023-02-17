@@ -58,6 +58,11 @@
                 canvasContext.beginPath()
                 canvasContext.arc(0, 0, radius, 0, 2*Math.PI);
                 canvasContext.fill();
+
+                canvasContext.beginPath();
+                canvasContext.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
+                canvasContext.fillStyle = 'black';
+                canvasContext.fill();
             }
 
             function drawClockHours(day){

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CLOCK_CANVAS</title>
+    <style>
+        body{
+            margin: 0;
+        }
+        
+        #startMenu{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        'use strict'
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('readyButton').disabled = false
+        });
+
+        function clockStarter() {
+            const clockFaceDiameter = document.getElementById('diameter').value;
+
+            let elem = document.getElementById('startMenu');
+            elem.style.display = 'none';
+
+            elem = document.getElementById('canvas');
+            let canvasContext = elem.getContext('2d');
+            canvasContext.canvas.width = clockFaceDiameter;
+            canvasContext.canvas.height = clockFaceDiameter;
+
+            const radius = clockFaceDiameter/2;
+            canvasContext.translate(radius, radius);
+
+            drawClock();
+
+            setInterval(drawClock, clockAccuracy());
+
+            function drawClock() {
+                drawClockFace(canvasContext, radius);
+                drawClockHours(canvasContext, radius);
+                drawHandsPosition(canvasContext, radius);
+            }
+
+            function drawClockFace(){
+                canvasContext.fillStyle = 'yellow';
+                canvasContext.beginPath()
+                canvasContext.arc(0, 0, radius, 0, 2*Math.PI);
+                canvasContext.fill();
+            }
+
+            function drawClockHours(){
+                canvasContext.font = radius * 0.12 + "px arial";
+                canvasContext.textBaseline = "middle";
+                canvasContext.textAlign = "center";
+                canvasContext.fillStyle = 'green';
+
+                for (let hour = 1; hour <= 12 ; hour++) {
+                    const hourAngelRadians = degreesToRadians(360/12*hour);
+                    canvasContext.rotate(hourAngelRadians);
+                    canvasContext.translate(0, -radius * 0.85);
+                    canvasContext.rotate(-hourAngelRadians);
+
+                    canvasContext.beginPath()
+                    canvasContext.arc(0, 0, (radius * 0.1), 0, 2*Math.PI);
+                    canvasContext.fill();
+
+                    canvasContext.fillStyle = 'black';
+                    canvasContext.fillText(hour.toString(), 0, 0);
+                    if(hour === 12){
+                        canvasContext.fillText(drawDigitalClock(), 0, radius * 0.3);
+                    }
+                    canvasContext.fillStyle = 'green';
+
+                    canvasContext.rotate(hourAngelRadians);
+                    canvasContext.translate(0, radius * 0.85);
+                    canvasContext.rotate(-hourAngelRadians);
+                }
+            }
+
+            function drawHandsPosition(){
+                const oneMinOrSecDegree = 6;
+                let day = new Date();
+                let hour = day.getHours();
+                let minute = day.getMinutes();
+                let second = day.getSeconds();
+
+                hour = degreesToRadians((hour*30)+((minute/12)*oneMinOrSecDegree));
+                drawClockHand(hour, radius*0.5, radius*0.07);
+
+                minute = degreesToRadians(minute*oneMinOrSecDegree);
+                drawClockHand(minute, radius*0.8, radius*0.07);
+
+                second = degreesToRadians(second*oneMinOrSecDegree);
+                drawClockHand(second, radius*0.9, radius*0.02);
+
+            }
+
+            function drawDigitalClock(){
+                let day = new Date();
+                let hour = day.getHours();
+                let minute = day.getMinutes();
+                let second = day.getSeconds();
+
+                return `${updateTime(hour)}:${updateTime(minute)}:${updateTime(second)}`
+            }
+
+            function drawClockHand(pos, length, width) {
+                canvasContext.beginPath();
+                canvasContext.lineWidth = width;
+                canvasContext.lineCap = "round";
+                canvasContext.moveTo(0,0);
+                canvasContext.rotate(pos);
+                canvasContext.lineTo(0, -length);
+                canvasContext.stroke();
+                canvasContext.rotate(-pos);
+            }
+        }
+
+        function degreesToRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        function updateTime(clockDigit) {
+            if (clockDigit < 10) {
+                return '0' + clockDigit;
+            }
+            else {
+                return clockDigit;
+            }
+        }
+
+        function clockAccuracy(){
+            let milliseconds = new Date().getMilliseconds();
+            return (1010 - milliseconds);
+        }
+    </script>
+
+    <div id="startMenu">
+        <label for="diameter">Введите диаметр циферблата (между 200 и 800): </label>
+        <input type="number" name="diameter" id="diameter" min="200" max="800"><br>
+        <input type="button" id="readyButton" value="Готово" onclick="clockStarter()" disabled>
+    </div>
+
+    <canvas id="canvas"></canvas>
+</body>
+</html>

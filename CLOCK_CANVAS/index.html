@@ -37,12 +37,20 @@
 
             drawClock();
 
-            setInterval(drawClock, clockAccuracy());
-
             function drawClock() {
-                drawClockFace(canvasContext, radius);
-                drawClockHours(canvasContext, radius);
-                drawHandsPosition(canvasContext, radius);
+                let day = new Date();
+                let hour = day.getHours();
+                let minute = day.getMinutes();
+                let second = day.getSeconds();
+                let millisecond = day.getMilliseconds();
+
+                drawClockFace();
+                drawClockHours(day);
+                drawHandsPosition(day);
+
+                console.log(`${updateTime(hour)}:${updateTime(minute)}:${updateTime(second)}`);
+
+                setTimeout(drawClock, 1010 - millisecond);
             }
 
             function drawClockFace(){
@@ -52,7 +60,7 @@
                 canvasContext.fill();
             }
 
-            function drawClockHours(){
+            function drawClockHours(day){
                 canvasContext.font = radius * 0.12 + "px arial";
                 canvasContext.textBaseline = "middle";
                 canvasContext.textAlign = "center";
@@ -71,7 +79,7 @@
                     canvasContext.fillStyle = 'black';
                     canvasContext.fillText(hour.toString(), 0, 0);
                     if(hour === 12){
-                        canvasContext.fillText(drawDigitalClock(), 0, radius * 0.3);
+                        canvasContext.fillText(drawDigitalClock(day), 0, radius * 0.3);
                     }
                     canvasContext.fillStyle = 'green';
 
@@ -81,9 +89,8 @@
                 }
             }
 
-            function drawHandsPosition(){
+            function drawHandsPosition(day){
                 const oneMinOrSecDegree = 6;
-                let day = new Date();
                 let hour = day.getHours();
                 let minute = day.getMinutes();
                 let second = day.getSeconds();
@@ -96,16 +103,14 @@
 
                 second = degreesToRadians(second*oneMinOrSecDegree);
                 drawClockHand(second, radius*0.9, radius*0.02);
-
             }
 
-            function drawDigitalClock(){
-                let day = new Date();
+            function drawDigitalClock(day){
                 let hour = day.getHours();
                 let minute = day.getMinutes();
                 let second = day.getSeconds();
 
-                return `${updateTime(hour)}:${updateTime(minute)}:${updateTime(second)}`
+                return `${updateTime(hour)}:${updateTime(minute)}:${updateTime(second)}`;
             }
 
             function drawClockHand(pos, length, width) {
@@ -131,11 +136,6 @@
             else {
                 return clockDigit;
             }
-        }
-
-        function clockAccuracy(){
-            let milliseconds = new Date().getMilliseconds();
-            return (1010 - milliseconds);
         }
     </script>
 

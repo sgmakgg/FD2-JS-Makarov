@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TENNIS_DOM</title>
+
+  <style>
+    body{
+        margin: 0;
+    }
+
+    #headerDiv{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: left;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #startBottom{
+        text-align: left ;
+        flex: 0 0 45px;
+        width: 30%;
+    }
+
+    #gameScore{
+        flex: 0 0 auto;
+        display: block;
+        width: 80%;
+        text-align: center;
+        font-size: 26px;
+        font-weight: bold;
+    }
+    #tableFrame{
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #tennisTable{
+        position: relative;
+        background-color: yellow;
+        border: 1px solid darkgrey;
+        width: 100%;
+        height: 100%;
+    }
+
+    #leftPaddle{
+        position: absolute;
+        background-color: green;
+    }
+
+    #rightPaddle{
+        position: absolute;
+        background-color: blue;
+    }
+
+    #ball{
+        position: absolute;
+        border-radius: 50%;
+        background-color: red;
+    }
+  </style>
+</head>
+<body>
+
+    <div id="headerDiv">
+        <div id="startBottom">
+            <input type="button" value="Start" onclick="gameStarter()" disabled>
+        </div>
+        <span id="gameScore">0 : 0</span>
+    </div>
+
+    <div id="tableFrame">
+        <div id="tennisTable">
+            <div id="leftPaddle">
+
+            </div>
+            <div id="rightPaddle">
+
+            </div>
+            <div id="ball">
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        'use strict'
+
+        const paddleWidth = 10;
+        const paddleHeight = 100;
+
+        const tennisTableWidth = 600;
+        const tennisTableHeight = 400;
+
+        const ballWidth = 25;
+        const ballHeight = 25;
+
+        let element = document.getElementById('headerDiv');
+        element.style.width = tennisTableWidth + 'px';
+
+        let table = document.getElementById('tableFrame');
+        table.style.width = tennisTableWidth + 'px';
+        table.style.height = tennisTableHeight + 'px';
+
+        table = document.getElementById('tennisTable');
+
+        let leftPaddle = document.getElementById('leftPaddle');
+        leftPaddle.style.width = paddleWidth + 'px';
+        leftPaddle.style.height = paddleHeight + 'px';
+
+        let rightPaddle = document.getElementById('rightPaddle');
+        rightPaddle.style.width = paddleWidth + 'px';
+        rightPaddle.style.height = paddleHeight + 'px';
+        let borderWidth = parseFloat(getComputedStyle(table).borderWidth);
+        rightPaddle.style.left = (table.offsetWidth - borderWidth*2 - paddleWidth) + 'px';
+        rightPaddle.style.top = (table.offsetHeight - borderWidth - paddleHeight) + 'px';
+
+        let ball = document.getElementById('ball');
+        ball.style.width = ballWidth + 'px';
+        ball.style.height = ballHeight + 'px';
+        ball.style.left = (tennisTableWidth/2 - ballWidth/2) + 'px';
+        ball.style.top = (tennisTableHeight/2 - ballWidth/2) + 'px';
+
+        function gameStarter(){
+
+        }
+    </script>
+
+</body>
+</html>

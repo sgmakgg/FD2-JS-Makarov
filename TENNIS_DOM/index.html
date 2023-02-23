@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TENNIS_DOM</title>
 
-  <style>
+    <style>
     body{
         margin: 0;
     }
@@ -61,10 +61,9 @@
         border-radius: 50%;
         background-color: red;
     }
-  </style>
+    </style>
 </head>
 <body>
-
     <div id="headerDiv">
         <div id="startBottom">
             <input type="button" value="Start" onclick="gameStarter()" disabled>
@@ -90,44 +89,141 @@
     <script>
         'use strict'
 
-        const paddleWidth = 10;
-        const paddleHeight = 100;
-
-        const tennisTableWidth = 600;
-        const tennisTableHeight = 400;
-
-        const ballWidth = 25;
-        const ballHeight = 25;
+        const tennisTable = {
+            width: 600,
+            height: 400
+        }
 
         let element = document.getElementById('headerDiv');
-        element.style.width = tennisTableWidth + 'px';
+        element.style.width = tennisTable.width + 'px';
 
         let table = document.getElementById('tableFrame');
-        table.style.width = tennisTableWidth + 'px';
-        table.style.height = tennisTableHeight + 'px';
+        table.style.width = tennisTable.width + 'px';
+        table.style.height = tennisTable.height + 'px';
 
         table = document.getElementById('tennisTable');
 
-        let leftPaddle = document.getElementById('leftPaddle');
-        leftPaddle.style.width = paddleWidth + 'px';
-        leftPaddle.style.height = paddleHeight + 'px';
+        let leftPaddle = {
+            positionX: 0,
+            positionY: 0,
+            speedY: 0,
+            width: 10,
+            height: 100,
 
-        let rightPaddle = document.getElementById('rightPaddle');
-        rightPaddle.style.width = paddleWidth + 'px';
-        rightPaddle.style.height = paddleHeight + 'px';
-        let borderWidth = parseFloat(getComputedStyle(table).borderWidth);
-        rightPaddle.style.left = (table.offsetWidth - borderWidth*2 - paddleWidth) + 'px';
-        rightPaddle.style.top = (table.offsetHeight - borderWidth - paddleHeight) + 'px';
+            update: function (){
+                const elem = document.getElementById('leftPaddle');
+                elem.style.left = this.positionX + 'px';
+                elem.style.top = this.positionY + 'px';
+            },
 
-        let ball = document.getElementById('ball');
-        ball.style.width = ballWidth + 'px';
-        ball.style.height = ballHeight + 'px';
-        ball.style.left = (tennisTableWidth/2 - ballWidth/2) + 'px';
-        ball.style.top = (tennisTableHeight/2 - ballWidth/2) + 'px';
-
-        function gameStarter(){
-
+            setSize: function (){
+                const elem = document.getElementById('leftPaddle');
+                elem.style.width = this.width + 'px';
+                elem.style.height = this.height + 'px';
+            }
         }
+        leftPaddle.setSize();
+        
+        let rightPaddle = {
+            positionX: 0,
+            positionY: 0,
+            speedY: 1,
+            width: 10,
+            height: 100,
+
+            update: function (){
+                const elem = document.getElementById('rightPaddle');
+                elem.style.left = this.positionX + 'px';
+                elem.style.top = this.positionY + 'px';
+            },
+
+            setSize: function (){
+                const elem = document.getElementById('rightPaddle');
+                elem.style.width = this.width + 'px';
+                elem.style.height = this.height + 'px';
+            }
+        }
+        let borderWidth = parseFloat(getComputedStyle(table).borderWidth);
+        rightPaddle.positionX = (table.offsetWidth - borderWidth*2 - rightPaddle.width);
+        rightPaddle.positionY = (table.offsetHeight - borderWidth - rightPaddle.height);
+        rightPaddle.setSize();
+        rightPaddle.update();
+
+        let ball = {
+            positionX: 0,
+            positionY: 0,
+            speedY: 1,
+            diameter: 25,
+
+            update: function (){
+                const elem = document.getElementById('ball');
+                elem.style.left = this.positionX + 'px';
+                elem.style.top = this.positionY + 'px';
+            },
+
+            setSize: function (){
+                const elem = document.getElementById('ball');
+                elem.style.width = this.diameter + 'px';
+                elem.style.height = this.diameter + 'px';
+            }
+        }
+        ball.positionX = (tennisTable.width/2 - ball.diameter/2);
+        ball.positionY = (tennisTable.height/2 - ball.diameter/2);
+        ball.setSize();
+        ball.update();
+
+        document.addEventListener('keydown', isKeyPressed);
+        document.addEventListener('keyup', isKeyUp);
+
+        requestAnimationFrame(gameStarter);
+        function gameStarter(){
+            paddleMove(leftPaddle);
+            paddleMove(rightPaddle);
+            requestAnimationFrame(gameStarter);
+        }
+
+        function paddleMove(paddle){
+
+            paddle.positionY += paddle.speedY;
+
+            if (paddle.positionY < 0) {
+                paddle.speedY = 0;
+                paddle.positionY = 0;
+            }
+            if(paddle.positionY + paddle.height >  tennisTable.height){
+                paddle.speedY = 0;
+                paddle.positionY = tennisTable.height - paddle.height;
+            }
+
+            paddle.update();
+        }
+
+        function isKeyPressed(eo) {
+            eo = eo || window.event;
+            if(eo.shiftKey){
+                leftPaddle.speedY = -1;
+            }
+
+            if(eo.ctrlKey){
+                leftPaddle.speedY = 1;
+            }
+
+            if(eo.key === 'ArrowUp'){
+                rightPaddle.speedY = -1;
+            }
+            if(eo.key === 'ArrowDown'){
+                rightPaddle.speedY = 1;
+            }
+        }
+
+        function isKeyUp(eo){
+            eo = eo || window.event;
+            if (eo.code === 'ControlLeft' || eo.code === 'ShiftLeft')
+                leftPaddle.speedY = 0;
+            if (eo.code === 'ArrowUp' || eo.code === 'ArrowDown')
+                rightPaddle.speedY = 0;
+        }
+        
     </script>
 
 </body>

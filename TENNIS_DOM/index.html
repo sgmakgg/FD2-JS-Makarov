@@ -60,15 +60,16 @@
         position: absolute;
         border-radius: 50%;
         background-color: red;
+        display: none;
     }
     </style>
 </head>
 <body>
     <div id="headerDiv">
         <div id="startBottom">
-            <input type="button" value="Start" onclick="gameStarter()" disabled>
+            <input type="button" value="Start" onclick="ballStarter()">
         </div>
-        <span id="gameScore">0 : 0</span>
+        <span id="gameScore"></span>
     </div>
 
     <div id="tableFrame">
@@ -94,8 +95,22 @@
             height: 400
         }
 
+        let gameScore = {
+            leftSide: 0,
+            rightSide: 0,
+            updated: false,
+
+            update: function() {
+                const element = document.getElementById('gameScore');
+                element.innerHTML = gameScore.leftSide +' ' + ':' + ' ' + gameScore.rightSide;
+                gameScore.updated = true;
+            }
+        }
+
         let element = document.getElementById('headerDiv');
         element.style.width = tennisTable.width + 'px';
+
+        gameScore.update();
 
         let table = document.getElementById('tableFrame');
         table.style.width = tennisTable.width + 'px';
@@ -152,8 +167,9 @@
         let ball = {
             positionX: 0,
             positionY: 0,
-            speedY: 1,
-            diameter: 25,
+            speedX: 0,
+            speedY: 0,
+            diameter: 30,
 
             update: function (){
                 const elem = document.getElementById('ball');
@@ -167,8 +183,10 @@
                 elem.style.height = this.diameter + 'px';
             }
         }
-        ball.positionX = (tennisTable.width/2 - ball.diameter/2);
-        ball.positionY = (tennisTable.height/2 - ball.diameter/2);
+        const ballStartingPositionX = (tennisTable.width/2 - ball.diameter/2);
+        const ballStartingPositionY = (tennisTable.height/2 - ball.diameter/2);
+        ball.positionX = ballStartingPositionX;
+        ball.positionY = ballStartingPositionY;
         ball.setSize();
         ball.update();
 
@@ -177,6 +195,7 @@
 
         requestAnimationFrame(gameStarter);
         function gameStarter(){
+            ballMove();
             paddleMove(leftPaddle);
             paddleMove(rightPaddle);
             requestAnimationFrame(gameStarter);
@@ -198,21 +217,73 @@
             paddle.update();
         }
 
+        function ballMove(){
+            ball.positionX += ball.speedX;
+            if (ball.positionX + ball.diameter> tennisTable.width){
+                ball.speedX = 0;
+                ball.speedY = 0;
+                if(!gameScore.updated){
+                    gameScore.leftSide++;
+                    gameScore.update();
+                }
+            }
+
+            if(ball.positionX < 0){
+                ball.speedX = 0;
+                ball.speedY = 0;
+                if(!gameScore.updated){
+                    gameScore.rightSide++;
+                    gameScore.update();
+                }
+            }
+
+            ball.positionY += ball.speedY;
+            if (ball.positionY + ball.diameter> tennisTable.height){
+                ball.speedY = -ball.speedY;
+                ball.positionY = tennisTable.height - ball.diameter;
+            }
+
+            if(ball.positionY < 0){
+                ball.speedY = -ball.speedY;
+                ball.positionY = 0;
+            }
+
+            if(ball.positionX < leftPaddle.positionX + leftPaddle.width
+                && ball.positionY + (ball.diameter/2) >= leftPaddle.positionY
+                && ball.positionY + (ball.diameter/2) <= leftPaddle.positionY + leftPaddle.height
+                && !gameScore.updated){
+
+                ball.speedX = -ball.speedX;
+                ball.positionX = leftPaddle.width;
+            }
+
+            if (ball.positionX + ball.diameter >= rightPaddle.positionX
+                && ball.positionY + (ball.diameter/2) >= rightPaddle.positionY
+                && ball.positionY + (ball.diameter/2) <= rightPaddle.positionY + rightPaddle.height
+                && !gameScore.updated){
+
+                ball.speedX = -ball.speedX;
+                ball.positionX = rightPaddle.positionX - ball.diameter;
+            }
+
+            ball.update()
+        }
+
         function isKeyPressed(eo) {
             eo = eo || window.event;
             if(eo.shiftKey){
-                leftPaddle.speedY = -1;
+                leftPaddle.speedY = -2;
             }
 
             if(eo.ctrlKey){
-                leftPaddle.speedY = 1;
+                leftPaddle.speedY = 2;
             }
 
             if(eo.key === 'ArrowUp'){
-                rightPaddle.speedY = -1;
+                rightPaddle.speedY = -2;
             }
             if(eo.key === 'ArrowDown'){
-                rightPaddle.speedY = 1;
+                rightPaddle.speedY = 2;
             }
         }
 
@@ -223,8 +294,26 @@
             if (eo.code === 'ArrowUp' || eo.code === 'ArrowDown')
                 rightPaddle.speedY = 0;
         }
-        
-    </script>
 
+        function ballStarter(){
+            const elem = document.getElementById('ball');
+            elem.style.display = 'block';
+
+            ball.positionX = ballStartingPositionX;
+            ball.positionY = ballStartingPositionY;
+            gameScore.updated = false;
+
+
+            ball.speedX = getRandomIntInclusive(-2, 2) + (getRandomIntInclusive(-20, 20)/10);
+            ball.speedY = getRandomIntInclusive(-2, 2) + (getRandomIntInclusive(-20, 20)/10);
+        }
+
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+    </script>
 </body>
 </html>

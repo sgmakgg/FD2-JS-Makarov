@@ -160,7 +160,7 @@ function memoGame() {
         // Set game timer and difficulty
         if (level === 8) {
             difficulty = 'casual';
-            timer *= level * 6;
+            timer *= level * 4;
         } else if (level === 18) {
             difficulty = 'medium';
             timer *= level * 5;

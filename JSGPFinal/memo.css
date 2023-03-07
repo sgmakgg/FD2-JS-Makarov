@@ -148,7 +148,8 @@ a:hover{
 #g .found{display:inline-block}
 .card{
     display:inline-block;
-    perspective:1000px;}
+    perspective:1000px;
+    border-radius: 50%;}
 .card:not(.active):hover{opacity:.8}
 .card .b::before{
     content:attr(data-f);
@@ -171,10 +172,15 @@ a:hover{
     backface-visibility:hidden;}
 .f {
     background:#FFCC09;
+    border-radius: 50%;
     z-index:1}
 .b {
     background:#C0392B;
-    opacity:0}
+    opacity:0;
+    border-radius: 50%;}
+.b.contentbox.levels{
+    border-radius: 50%;
+}
 .card.active .b{
     z-index:2;
     opacity:1}

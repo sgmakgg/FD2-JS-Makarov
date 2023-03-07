@@ -292,8 +292,10 @@ function memoGame() {
 
 
         //pause & emergency exit
-        window.addEventListener('keyup', function (eo) {
+        document.addEventListener('keyup' , pauseEsc);
+        document.addEventListener('swipeLeft' , pauseEsc);
 
+        function pauseEsc (eo) {
             if (eo.key === 'p') {
                 if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
                     currentGameAudio.play();
@@ -306,7 +308,7 @@ function memoGame() {
                 }
                 else {
                     currentGameAudio.pause();
-                    
+
                     document.body.setAttribute('data-paused', '1');
                     document.querySelector('.timer').style.animationPlayState = 'paused';
 
@@ -316,18 +318,19 @@ function memoGame() {
                 }
             }
 
-            if (eo.key === 'Escape') {
+            if (eo.key === 'Escape' || eo.type === 'swipeLeft') {
+                debugger
                 window.close();
             }
-        });
+        }
 
         function soundInit(sound) {
-            sound.play(); // запускаем звук
-            sound.pause(); // и сразу останавливаем
+            sound.play();
+            sound.pause();
         }
 
         function playSound(sound) {
-            sound.currentTime=0; // в секундах
+            sound.currentTime = 0;
             sound.play();
             sound.loop = true;
             sound.volume = 0.2;

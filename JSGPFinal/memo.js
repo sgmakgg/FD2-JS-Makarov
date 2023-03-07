@@ -177,7 +177,7 @@ function memoGame() {
             timer *= level * 6;
         } else if (level === 18) {
             difficulty = 'medium';
-            timer *= level * 5;
+            timer *= level * 6;
         } else if (level === 32) {
             difficulty = 'hard';
             timer *= level * 6;

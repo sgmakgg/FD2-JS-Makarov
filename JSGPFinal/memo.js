@@ -293,9 +293,9 @@ function memoGame() {
 
         //pause & emergency exit
         document.addEventListener('keyup' , pauseEsc);
-        document.addEventListener('swipeLeft' , pauseEsc);
 
         function pauseEsc (eo) {
+            eo = eo || window.event;
             if (eo.key === 'p') {
                 if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
                     currentGameAudio.play();
@@ -318,8 +318,7 @@ function memoGame() {
                 }
             }
 
-            if (eo.key === 'Escape' || eo.type === 'swipeLeft') {
-                debugger
+            if (eo.key === 'Escape') {
                 window.close();
             }
         }
@@ -337,3 +336,4 @@ function memoGame() {
         }
     }
 }
+

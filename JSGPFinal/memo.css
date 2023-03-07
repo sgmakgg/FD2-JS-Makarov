@@ -178,6 +178,9 @@ a:hover{
     background:#C0392B;
     opacity:0;
     border-radius: 50%;}
+.b.contentbox{
+    border-radius: 0;
+}
 .b.contentbox.levels{
     border-radius: 50%;
 }

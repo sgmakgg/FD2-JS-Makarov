@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', memoGame);
 function memoGame() {
+        if ( "ontouchstart" in window )
+            document.querySelector('#touches').innerHTML = 'Touches are supporting';
+        else
+            document.querySelector('#touches').innerHTML = "Touches aren't supporting";
         function setLocalStorage(key, value) {
             localStorage.setItem(key, value);
         }
@@ -298,29 +302,14 @@ function memoGame() {
 
         //pause & emergency exit
         document.addEventListener('keyup' , pauseEsc);
+        window.addEventListener('touchstart', handelTouches);
+        // document.addEventListener('touchend', () => {})
+        // document.addEventListener('touchmove', () => {})
 
         function pauseEsc (eo) {
             eo = eo || window.event;
             if (eo.key === 'p') {
-                if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
-                    currentGameAudio.play();
-
-                    document.body.setAttribute('data-paused', '0');
-                    document.querySelector('.timer').style.animationPlayState = 'running';
-
-                    let elem = document.body;
-                    elem.removeChild(document.querySelector('div.pause'));
-                }
-                else {
-                    currentGameAudio.pause();
-
-                    document.body.setAttribute('data-paused', '1');
-                    document.querySelector('.timer').style.animationPlayState = 'paused';
-
-                    let elem = document.createElement('div');
-                    elem.className += 'pause';
-                    document.body.appendChild(elem);
-                }
+                pauseScreenSwitcher();
             }
 
             if (eo.key === 'Escape') {
@@ -328,6 +317,35 @@ function memoGame() {
             }
         }
 
+        function handelTouches(eo){
+            eo = eo || window.event;
+            if(eo.targetTouches.length === 2){
+                pauseScreenSwitcher();
+            }
+        }
+
+        function pauseScreenSwitcher(){
+            if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
+                currentGameAudio.play();
+
+                document.body.setAttribute('data-paused', '0');
+                document.querySelector('.timer').style.animationPlayState = 'running';
+
+                let elem = document.body;
+                elem.removeChild(document.querySelector('div.pause'));
+            }
+            else {
+                currentGameAudio.pause();
+
+                document.body.setAttribute('data-paused', '1');
+                document.querySelector('.timer').style.animationPlayState = 'paused';
+
+                let elem = document.createElement('div');
+                elem.className += 'pause';
+                document.body.appendChild(elem);
+            }
+        }
+        
         function soundInit(sound) {
             sound.play();
             sound.pause();

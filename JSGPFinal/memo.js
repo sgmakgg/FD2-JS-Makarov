@@ -1,3 +1,5 @@
+import {soundInit, playSound} from './soundsFunctions.js';
+
 document.addEventListener('DOMContentLoaded', memoGame);
 function memoGame() {
         if ( "ontouchstart" in window )
@@ -346,17 +348,17 @@ function memoGame() {
             }
         }
         
-        function soundInit(sound) {
-            sound.play();
-            sound.pause();
-        }
-
-        function playSound(sound) {
-            sound.currentTime = 0;
-            sound.play();
-            sound.loop = true;
-            sound.volume = 0.2;
-        }
+        // function soundInit(sound) {
+        //     sound.play();
+        //     sound.pause();
+        // }
+        //
+        // function playSound(sound) {
+        //     sound.currentTime = 0;
+        //     sound.play();
+        //     sound.loop = true;
+        //     sound.volume = 0.2;
+        // }
     }
 }
 

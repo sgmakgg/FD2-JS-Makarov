@@ -194,11 +194,15 @@ function memoGame() {
             cards.push(i);
         }
 
-        let shuffled = shuffle([...cards, ...cards]),
-            cardSize = 100 / Math.sqrt(shuffled.length);
+        let shuffled = shuffle([...cards, ...cards]);
+        let defaultCardSize = 100 / Math.sqrt(shuffled.length) - 1.5;
 
 
         let gameElement = document.getElementById('g');
+
+        // Detect orientation change
+        let units = window.innerWidth > window.innerHeight ? "vh" : "vw";
+
         for (let i = 0; i < shuffled.length; i++) {
             let code = shuffled[i];
             if (code < 10)
@@ -209,16 +213,17 @@ function memoGame() {
                 code = 21;
 
             gameElement.innerHTML +=
-                '<div class="card" style="width:' + cardSize + '%;height:' + cardSize + '%;">' +
+                '<div class="card" style="width:' + defaultCardSize + units +';height:' + defaultCardSize + units +'">' +
                     '<div class="flipper">' +
                         '<div class="f"></div>' +
                         '<div class="b" data-f="&#xf0' + code + ';"></div>' +
                     '</div>' +
                 '</div>';
          }
-
+        
         // Set card actions
         let elements = document.querySelectorAll('#g .card');
+        
         for (let element = 0; element < elements.length; element++) {
             elements[element].addEventListener('mousedown', cardAction);
         }

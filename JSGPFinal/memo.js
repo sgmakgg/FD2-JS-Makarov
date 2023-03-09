@@ -195,7 +195,7 @@ function memoGame() {
         }
 
         let shuffled = shuffle([...cards, ...cards]);
-        let defaultCardSize = 100 / Math.sqrt(shuffled.length) - 1.5;
+        let defaultCardSize = 100 / Math.sqrt(shuffled.length) - 1;
 
 
         let gameElement = document.getElementById('g');

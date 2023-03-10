@@ -115,7 +115,7 @@ a:hover{
     padding:0 25px;}
 
 /* game screen */
-#g{margin-top:4px}
+#g{margin-top:5px}
 #g .timer{
     width:0;
     height:5px;
@@ -238,6 +238,10 @@ a:hover{
 
 @media screen and (orientation: portrait){
     #g{
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        padding-top: 5px;
         max-width: 99vw;
         max-height: 99vw;}
     @keyframes timer {100% { width:99vw;}}

@@ -8,44 +8,6 @@ function memoGame() {
         else
             document.querySelector('#touches').innerHTML = "Touches aren't supporting";
 
-        function shuffle(array) {
-            let currentIndex = array.length, temporaryValue, randomIndex;
-            while (0 !== currentIndex) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex -= 1;
-                temporaryValue = array[currentIndex];
-                array[currentIndex] = array[randomIndex];
-                array[randomIndex] = temporaryValue;
-            }
-            return array;
-        }
-
-        function startScreen(text) {
-            let elem = document.getElementById('g');
-            elem.removeAttribute('class');
-            elem.innerHTML = '';
-            elem = document.getElementById('logoId');
-            elem.removeAttribute('style');
-
-            document.querySelector('.c1').innerHTML = text.substring(0, 1);
-            document.querySelector('.c2').innerHTML = text.substring(1, 2);
-            document.querySelector('.c3').innerHTML = text.substring(2, 3);
-            document.querySelector('.c4').innerHTML = text.substring(3, 4);
-
-            // If won game
-            if (text === 'cool') {
-                increaseScore('flip_won');
-                decreaseScore('flip_abandoned');
-            }
-
-            // If lost game
-            else if (text === 'oops') {
-                increaseScore('flip_lost');
-                decreaseScore('flip_abandoned');
-            }
-
-            updateStats();
-        }
 
         // Game load
         // Init localStorage
@@ -77,29 +39,6 @@ function memoGame() {
                                 element.addEventListener('click', toggleCards);
                             });
 
-        function toggleCards(eo){
-            eo = eo || window.event;
-
-            let currentElement = eo.currentTarget;
-
-            let siblings = currentElement.parentNode.children;
-            for(let sibling = 0; sibling < siblings.length; sibling++){
-                let result = JSON.stringify(siblings[sibling].classList) === JSON.stringify(currentElement.classList);
-                let res1 = siblings[sibling].classList.contains('twist');
-                if( !result){
-                    if(!res1)
-                        siblings[sibling].classList.remove('active');
-                }
-            }
-            
-            eo.currentTarget.classList.toggle('active');
-        }
-
-        let elements = document.getElementsByClassName('play');
-        for (let element = 0; element < elements.length; element++) {
-            elements[element].addEventListener('click', startCurrentGame);
-        }
-
     function startCurrentGame (eo) {
         eo = eo || window.event;
 
@@ -107,8 +46,8 @@ function memoGame() {
         soundInit(currentGameAudio);
         playSound(currentGameAudio);
 
-        let pairCardSound = new Audio("sounds/funny-boing-sound-effect.mp3");
-        soundInit(pairCardSound);
+        let matchCardsSound = new Audio("sounds/funny-boing-sound-effect.mp3");
+        soundInit(matchCardsSound);
 
         let winGameSound = new Audio("sounds/funny-blowing-trumpet-sound-effect.mp3");
         soundInit(winGameSound);
@@ -192,7 +131,7 @@ function memoGame() {
                     let thisCards = gameElement.querySelectorAll('.active .b[data-f=' + data + ']');
 
                     if (thisCards.length > 1) {
-                        pairCardSound.play();
+                        matchCardsSound.play();
                         thisCards = document.querySelectorAll('div.card.active');
                         for (const thisCard of thisCards) {
                             let result = true;
@@ -248,12 +187,30 @@ function memoGame() {
 
         //pause & emergency exit
         document.addEventListener('keyup' , pauseEsc);
+        let start = null;
+
+        //pause with touches & swipes left/right
         window.addEventListener('touchstart', handelTouches);
-        // document.addEventListener('touchend', () => {})
-        // document.addEventListener('touchmove', () => {})
+        window.addEventListener('touchend', function(eo){
+            let offset = 100; //at least 100px are a swipe
+            if(start){
+                //the only finger that hit the screen left it
+                let end = eo.changedTouches[0].screenX;
+
+                if(end > start + offset){
+                    pauseScreenSwitcher();
+                    //a left -> right swipe
+                }
+                if(end < start - offset ){
+                    pauseScreenSwitcher();
+                    //a right -> left swipe
+                }
+            }
+        });
 
         function pauseEsc (eo) {
             eo = eo || window.event;
+
             if (eo.key === 'p') {
                 pauseScreenSwitcher();
             }
@@ -265,9 +222,19 @@ function memoGame() {
 
         function handelTouches(eo){
             eo = eo || window.event;
+
             if(eo.targetTouches.length === 2){
                 pauseScreenSwitcher();
             }
+
+            if(eo.touches.length === 1){
+                //just one finger touched
+                start = eo.touches[0].screenX;
+            }else{
+                //a second finger hit the screen, abort the touch
+                start = null;
+            }
+
         }
 
         function pauseScreenSwitcher(){
@@ -292,5 +259,69 @@ function memoGame() {
             }
         }
     }
+
+    function toggleCards(eo){
+        eo = eo || window.event;
+
+        let currentElement = eo.currentTarget;
+
+        let siblings = currentElement.parentNode.children;
+        for(let sibling = 0; sibling < siblings.length; sibling++){
+            let result = JSON.stringify(siblings[sibling].classList) === JSON.stringify(currentElement.classList);
+            let res1 = siblings[sibling].classList.contains('twist');
+            if( !result){
+                if(!res1)
+                    siblings[sibling].classList.remove('active');
+            }
+        }
+
+        eo.currentTarget.classList.toggle('active');
+    }
+
+    let elements = document.getElementsByClassName('play');
+    for (let element = 0; element < elements.length; element++) {
+        elements[element].addEventListener('click', startCurrentGame);
+    }
+
+    function shuffle(array) {
+        let currentIndex = array.length, temporaryValue, randomIndex;
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+        return array;
+    }
+
+    function startScreen(text) {
+        let elem = document.getElementById('g');
+        elem.removeAttribute('class');
+        elem.innerHTML = '';
+        elem = document.getElementById('logoId');
+        elem.removeAttribute('style');
+
+        document.querySelector('.c1').innerHTML = text.substring(0, 1);
+        document.querySelector('.c2').innerHTML = text.substring(1, 2);
+        document.querySelector('.c3').innerHTML = text.substring(2, 3);
+        document.querySelector('.c4').innerHTML = text.substring(3, 4);
+
+        // If won game
+        if (text === 'cool') {
+            increaseScore('flip_won');
+            decreaseScore('flip_abandoned');
+        }
+
+        // If lost game
+        else if (text === 'oops') {
+            increaseScore('flip_lost');
+            decreaseScore('flip_abandoned');
+        }
+
+        updateStats();
+    }
 }
+
+
 

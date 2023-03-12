@@ -1,12 +1,14 @@
 import {soundInit, playSound} from './sounds.js';
-import {setLocalStorage, getValue, increaseScore, decreaseScore, updateStats} from './statistic.js';
+import {setLocalStorage, getValue, increaseScore, updateStats} from './statistic.js';
+import {startScreen, switchToState, switchToStateFromURLHash} from './SPA.js';
 
 document.addEventListener('DOMContentLoaded', memoGame);
 function memoGame() {
         if ("ontouchstart" in window)
             document.querySelector('#touches').innerHTML = 'Touches are supporting';
-        else
-            document.querySelector('#touches').innerHTML = "Touches aren't supporting";
+
+        switchToState('Main');
+        window.onhashchange = switchToStateFromURLHash;
 
 
         // Game load
@@ -42,9 +44,12 @@ function memoGame() {
     function startCurrentGame (eo) {
         eo = eo || window.event;
 
+        switchToState('Game');
+
         let currentGameAudio = new Audio('sounds/simple-funny-background-music-intro.mp3');
         soundInit(currentGameAudio);
         playSound(currentGameAudio);
+        window.addEventListener("beforeunload", beforeUnload);
 
         let matchCardsSound = new Audio("sounds/funny-boing-sound-effect.mp3");
         soundInit(matchCardsSound);
@@ -158,6 +163,7 @@ function memoGame() {
                             }
                             startScreen('cool');
                             currentGameAudio.pause();
+                            window.removeEventListener("beforeunload", beforeUnload);
                             winGameSound.play();
                         }
                     }
@@ -176,11 +182,14 @@ function memoGame() {
         elem.className += 'timer';
         elem.style.animation = 'timer ' + timer + 'ms linear';
 
-        elem.addEventListener('animationend', function timerFunction() {
+        function timerFunction() {
             startScreen('oops');
+            window.removeEventListener("beforeunload", beforeUnload);
             currentGameAudio.pause();
             elem.removeEventListener('animationend', timerFunction);
-        });
+        }
+
+        elem.addEventListener('animationend', timerFunction);
 
         document.getElementById('g').prepend(elem);
 
@@ -295,31 +304,8 @@ function memoGame() {
         return array;
     }
 
-    function startScreen(text) {
-        let elem = document.getElementById('g');
-        elem.removeAttribute('class');
-        elem.innerHTML = '';
-        elem = document.getElementById('logoId');
-        elem.removeAttribute('style');
-
-        document.querySelector('.c1').innerHTML = text.substring(0, 1);
-        document.querySelector('.c2').innerHTML = text.substring(1, 2);
-        document.querySelector('.c3').innerHTML = text.substring(2, 3);
-        document.querySelector('.c4').innerHTML = text.substring(3, 4);
-
-        // If won game
-        if (text === 'cool') {
-            increaseScore('flip_won');
-            decreaseScore('flip_abandoned');
-        }
-
-        // If lost game
-        else if (text === 'oops') {
-            increaseScore('flip_lost');
-            decreaseScore('flip_abandoned');
-        }
-
-        updateStats();
+    function beforeUnload(event) {
+        event.returnValue = "Data will be lost";
     }
 }
 

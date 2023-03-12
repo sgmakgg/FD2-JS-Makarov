@@ -1,6 +1,5 @@
 import {soundInit, playSound} from './sounds.js';
-import {setLocalStorage, getValue, increaseScore, updateStats} from './statistic.js';
-import {startScreen, switchToState, switchToStateFromURLHash} from './SPA.js';
+import {setLocalStorage, getValue, increaseScore, updateStats, decreaseScore} from './statistic.js';
 
 document.addEventListener('DOMContentLoaded', memoGame);
 function memoGame() {
@@ -10,6 +9,7 @@ function memoGame() {
         switchToState('Main');
         window.onhashchange = switchToStateFromURLHash;
 
+        let currentGameState = {};
 
         // Game load
         // Init localStorage
@@ -46,16 +46,17 @@ function memoGame() {
 
         switchToState('Game');
 
-        let currentGameAudio = new Audio('sounds/simple-funny-background-music-intro.mp3');
-        soundInit(currentGameAudio);
-        playSound(currentGameAudio);
+        currentGameState.currentGameAudio = new Audio('sounds/simple-funny-background-music-intro.mp3');
+        soundInit(currentGameState.currentGameAudio);
+        playSound(currentGameState.currentGameAudio);
+
         window.addEventListener("beforeunload", beforeUnload);
 
-        let matchCardsSound = new Audio("sounds/funny-boing-sound-effect.mp3");
-        soundInit(matchCardsSound);
+        currentGameState.matchCardsSound = new Audio("sounds/funny-boing-sound-effect.mp3");
+        soundInit(currentGameState.matchCardsSound);
 
-        let winGameSound = new Audio("sounds/funny-blowing-trumpet-sound-effect.mp3");
-        soundInit(winGameSound);
+        currentGameState.winGameSound = new Audio("sounds/funny-blowing-trumpet-sound-effect.mp3");
+        soundInit(currentGameState.winGameSound);
 
         increaseScore('flip_abandoned');
 
@@ -136,7 +137,7 @@ function memoGame() {
                     let thisCards = gameElement.querySelectorAll('.active .b[data-f=' + data + ']');
 
                     if (thisCards.length > 1) {
-                        matchCardsSound.play();
+                        currentGameState.matchCardsSound.play();
                         thisCards = document.querySelectorAll('div.card.active');
                         for (const thisCard of thisCards) {
                             let result = true;
@@ -162,9 +163,9 @@ function memoGame() {
                                 setLocalStorage('flip_' + difficulty, time);
                             }
                             startScreen('cool');
-                            currentGameAudio.pause();
+                            currentGameState.currentGameAudio.pause();
                             window.removeEventListener("beforeunload", beforeUnload);
-                            winGameSound.play();
+                            currentGameState.winGameSound.play();
                         }
                     }
                     else {
@@ -182,14 +183,9 @@ function memoGame() {
         elem.className += 'timer';
         elem.style.animation = 'timer ' + timer + 'ms linear';
 
-        function timerFunction() {
-            startScreen('oops');
-            window.removeEventListener("beforeunload", beforeUnload);
-            currentGameAudio.pause();
-            elem.removeEventListener('animationend', timerFunction);
-        }
 
-        elem.addEventListener('animationend', timerFunction);
+
+        elem.addEventListener('animationend', gameEnd);
 
         document.getElementById('g').prepend(elem);
 
@@ -248,7 +244,7 @@ function memoGame() {
 
         function pauseScreenSwitcher(){
             if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
-                currentGameAudio.play();
+                currentGameState.currentGameAudio.play();
 
                 document.body.setAttribute('data-paused', '0');
                 document.querySelector('.timer').style.animationPlayState = 'running';
@@ -257,7 +253,7 @@ function memoGame() {
                 elem.removeChild(document.querySelector('div.pause'));
             }
             else {
-                currentGameAudio.pause();
+                currentGameState.currentGameAudio.pause();
 
                 document.body.setAttribute('data-paused', '1');
                 document.querySelector('.timer').style.animationPlayState = 'paused';
@@ -306,6 +302,61 @@ function memoGame() {
 
     function beforeUnload(event) {
         event.returnValue = "Data will be lost";
+    }
+
+    function switchToState(newState) {
+        location.hash = newState;
+    }
+
+    function switchToStateFromURLHash(){
+        let URLHash=window.location.hash;
+        let stateStr = URLHash.substr(1);
+
+        if ( stateStr === "" )
+            stateStr ='Main';
+
+        switch (stateStr) {
+            case 'Main':
+                gameEnd();
+                break;
+            case 'Game':
+                break;
+        }
+    }
+
+    function startScreen(text) {
+        let elem = document.getElementById('g');
+        elem.removeAttribute('class');
+        elem.innerHTML = '';
+        elem = document.getElementById('logoId');
+        elem.removeAttribute('style');
+
+        document.querySelector('.c1').innerHTML = text.substring(0, 1);
+        document.querySelector('.c2').innerHTML = text.substring(1, 2);
+        document.querySelector('.c3').innerHTML = text.substring(2, 3);
+        document.querySelector('.c4').innerHTML = text.substring(3, 4);
+
+        // If won game
+        if (text === 'cool') {
+            increaseScore('flip_won');
+            decreaseScore('flip_abandoned');
+        }
+
+        // If lost game
+        else if (text === 'oops') {
+            increaseScore('flip_lost');
+            decreaseScore('flip_abandoned');
+        }
+
+        updateStats();
+    }
+    
+    function gameEnd() {
+        startScreen('oops');
+        window.removeEventListener("beforeunload", beforeUnload);
+        currentGameState.currentGameAudio.pause();
+        let elem = document.querySelector('i')
+        elem.removeEventListener('animationend', gameEnd);
     }
 }
 

@@ -9,7 +9,9 @@ function memoGame() {
         switchToState('Main');
         window.onhashchange = switchToStateFromURLHash;
 
-        let currentGameState = {};
+        let currentGameState = {
+            startScreenText: 'memo'
+        };
 
         // Game load
         // Init localStorage
@@ -162,9 +164,9 @@ function memoGame() {
                                 // increase best score
                                 setLocalStorage('flip_' + difficulty, time);
                             }
-                            startScreen('cool');
-                            currentGameState.currentGameAudio.pause();
-                            window.removeEventListener("beforeunload", beforeUnload);
+
+                            currentGameState.startScreenText = 'cool'
+                            gameEnd();
                             currentGameState.winGameSound.play();
                         }
                     }
@@ -182,87 +184,19 @@ function memoGame() {
         let elem = document.createElement('i');
         elem.className += 'timer';
         elem.style.animation = 'timer ' + timer + 'ms linear';
-
-
-
-        elem.addEventListener('animationend', gameEnd);
+        currentGameState.startScreenText = 'oops';
+        elem.addEventListener('animationend', switchToMain);
 
         document.getElementById('g').prepend(elem);
-
-
+        
         //pause & emergency exit
         document.addEventListener('keyup' , pauseEsc);
-        let start = null;
+
+        currentGameState.touchStart = null;
 
         //pause with touches & swipes left/right
         window.addEventListener('touchstart', handelTouches);
-        window.addEventListener('touchend', function(eo){
-            let offset = 100; //at least 100px are a swipe
-            if(start){
-                //the only finger that hit the screen left it
-                let end = eo.changedTouches[0].screenX;
-
-                if(end > start + offset){
-                    pauseScreenSwitcher();
-                    //a left -> right swipe
-                }
-                if(end < start - offset ){
-                    pauseScreenSwitcher();
-                    //a right -> left swipe
-                }
-            }
-        });
-
-        function pauseEsc (eo) {
-            eo = eo || window.event;
-
-            if (eo.key === 'p') {
-                pauseScreenSwitcher();
-            }
-
-            if (eo.key === 'Escape') {
-                window.close();
-            }
-        }
-
-        function handelTouches(eo){
-            eo = eo || window.event;
-
-            if(eo.targetTouches.length === 2){
-                pauseScreenSwitcher();
-            }
-
-            if(eo.touches.length === 1){
-                //just one finger touched
-                start = eo.touches[0].screenX;
-            }else{
-                //a second finger hit the screen, abort the touch
-                start = null;
-            }
-
-        }
-
-        function pauseScreenSwitcher(){
-            if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
-                currentGameState.currentGameAudio.play();
-
-                document.body.setAttribute('data-paused', '0');
-                document.querySelector('.timer').style.animationPlayState = 'running';
-
-                let elem = document.body;
-                elem.removeChild(document.querySelector('div.pause'));
-            }
-            else {
-                currentGameState.currentGameAudio.pause();
-
-                document.body.setAttribute('data-paused', '1');
-                document.querySelector('.timer').style.animationPlayState = 'paused';
-
-                let elem = document.createElement('div');
-                elem.className += 'pause';
-                document.body.appendChild(elem);
-            }
-        }
+        window.addEventListener('touchend', touchEnd);
     }
 
     function toggleCards(eo){
@@ -352,11 +286,96 @@ function memoGame() {
     }
     
     function gameEnd() {
-        startScreen('oops');
+        startScreen(currentGameState.startScreenText);
+
         window.removeEventListener("beforeunload", beforeUnload);
+        window.removeEventListener('touchstart', handelTouches);
+        window.removeEventListener('touchend', touchEnd);
+        
         currentGameState.currentGameAudio.pause();
         let elem = document.querySelector('i')
-        elem.removeEventListener('animationend', gameEnd);
+
+        elem.removeEventListener('animationend', switchToMain);
+
+        if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
+            document.body.setAttribute('data-paused', '0');
+
+            let elem = document.body;
+            elem.removeChild(document.querySelector('div.pause'));
+        }
+    }
+
+    function touchEnd(eo){
+        let offset = 100; //at least 100px are a swipe
+        if(currentGameState.touchStart){
+            //the only finger that hit the screen left it
+            let end = eo.changedTouches[0].screenX;
+
+            if(end > currentGameState.touchStart + offset){
+                pauseScreenSwitcher();
+                //a left -> right swipe
+            }
+            if(end < currentGameState.touchStart - offset ){
+                switchToState('Main');
+                //a right -> left swipe
+            }
+        }
+    }
+
+    function pauseScreenSwitcher(){
+        if (parseInt(document.body.getAttribute('data-paused')) === 1) { //was paused, now resume
+            currentGameState.currentGameAudio.play();
+
+            document.body.setAttribute('data-paused', '0');
+            document.querySelector('.timer').style.animationPlayState = 'running';
+
+            let elem = document.body;
+            elem.removeChild(document.querySelector('div.pause'));
+        }
+        else {
+            currentGameState.currentGameAudio.pause();
+
+            document.body.setAttribute('data-paused', '1');
+            document.querySelector('.timer').style.animationPlayState = 'paused';
+
+            let elem = document.createElement('div');
+            elem.className += 'pause';
+            document.body.appendChild(elem);
+        }
+    }
+
+    function handelTouches(eo){
+        eo = eo || window.event;
+
+        if(eo.targetTouches.length === 2){
+            pauseScreenSwitcher();
+        }
+
+        if(eo.touches.length === 1){
+            //just one finger touched
+            currentGameState.touchStart = eo.touches[0].screenX;
+        }else{
+            //a second finger hit the screen, abort the touch
+            currentGameState.touchStart = null;
+        }
+
+    }
+
+    function pauseEsc (eo) {
+        eo = eo || window.event;
+
+        if (eo.key === 'p') {
+            pauseScreenSwitcher();
+        }
+
+        if (eo.key === 'Escape') {
+            currentGameState.startScreenText = 'main';
+            switchToState('Main');
+        }
+    }
+
+    function switchToMain(){
+        switchToState('Main');
     }
 }
 

@@ -10,8 +10,26 @@ function memoGame() {
         window.onhashchange = switchToStateFromURLHash;
 
         let currentGameState = {
-            startScreenText: 'memo'
+            defaultStartScreenText: 'memo',
+            startScreenText: 'memo',
+            defaultDifficulty: '',
+            difficulty: '',
+            defaultTimer: 1000,
+            timer: 1000,
+            defaultLevel: 0,
+            level: 0,
+            touchStart: null,
+            startGame: null
         };
+
+        currentGameState.currentGameAudio = new Audio('sounds/simple-funny-background-music-intro.mp3');
+        soundInit(currentGameState.currentGameAudio);
+
+        currentGameState.matchCardsSound = new Audio("sounds/funny-boing-sound-effect.mp3");
+        soundInit(currentGameState.matchCardsSound);
+
+        currentGameState.winGameSound = new Audio("sounds/funny-blowing-trumpet-sound-effect.mp3");
+        soundInit(currentGameState.winGameSound);
 
         // Game load
         // Init localStorage
@@ -46,157 +64,38 @@ function memoGame() {
     function startCurrentGame (eo) {
         eo = eo || window.event;
 
-        switchToState('Game');
-
-        currentGameState.currentGameAudio = new Audio('sounds/simple-funny-background-music-intro.mp3');
-        soundInit(currentGameState.currentGameAudio);
-        playSound(currentGameState.currentGameAudio);
+        setDefaultGameObject();
 
         window.addEventListener("beforeunload", beforeUnload);
 
-        currentGameState.matchCardsSound = new Audio("sounds/funny-boing-sound-effect.mp3");
-        soundInit(currentGameState.matchCardsSound);
+        //pause & emergency exit
+        document.addEventListener('keyup' , pauseEsc);
 
-        currentGameState.winGameSound = new Audio("sounds/funny-blowing-trumpet-sound-effect.mp3");
-        soundInit(currentGameState.winGameSound);
+        //pause with touches & swipes left/right
+        window.addEventListener('touchstart', handelTouches);
+        window.addEventListener('touchend', touchEnd);
 
         increaseScore('flip_abandoned');
 
         document.querySelector('.info').style.display = 'none';
 
-        let difficulty = '',
-            timer = 1000,
-            level = parseInt(eo.currentTarget.dataset.level);
+        currentGameState.level = parseInt(eo.currentTarget.dataset.level);
 
         // Set game timer and difficulty
-        if (level === 8) {
-            difficulty = 'casual';
-            timer *= level * 6;
-        } else if (level === 18) {
-            difficulty = 'medium';
-            timer *= level * 6;
-        } else if (level === 32) {
-            difficulty = 'hard';
-            timer *= level * 6;
+        if (currentGameState.level === 8) {
+            currentGameState.difficulty = 'casual';
+            currentGameState.timer *= currentGameState.level * 6;
+        }
+        else if (currentGameState.level === 18) {
+            currentGameState.difficulty = 'medium';
+            currentGameState.timer *= currentGameState.level * 6;
+        }
+        else if (currentGameState.level === 32) {
+            currentGameState.difficulty = 'hard';
+            currentGameState.timer *= currentGameState.level * 6;
         }
 
-        document.getElementById('g').className += difficulty;
-        document.querySelector('.logo').style.display = 'none';
-
-        let startGame = Date.now(),
-            cards = [];
-
-        // Create and add shuffled cards to game
-        for (let i = 0; i < level; i++) {
-            cards.push(i);
-        }
-
-        let shuffled = shuffle([...cards, ...cards]);
-        let defaultCardSize = 100 / Math.sqrt(shuffled.length) - 1;
-
-
-        let gameElement = document.getElementById('g');
-
-        // Detect orientation change
-        let units = window.innerWidth > window.innerHeight ? "vh" : "vw";
-
-        for (let i = 0; i < shuffled.length; i++) {
-            let code = shuffled[i];
-            if (code < 10)
-                code = "0" + code;
-            if (code === 30)
-                code = 10;
-            if (code === 31)
-                code = 21;
-
-            gameElement.innerHTML +=
-                '<div class="card" style="width:' + defaultCardSize + units +';height:' + defaultCardSize + units +'">' +
-                    '<div class="flipper">' +
-                        '<div class="f"></div>' +
-                        '<div class="b" data-f="&#xf0' + code + ';"></div>' +
-                    '</div>' +
-                '</div>';
-         }
-        
-        // Set card actions
-        let elements = document.querySelectorAll('#g .card');
-        
-        for (let element = 0; element < elements.length; element++) {
-            elements[element].addEventListener('mousedown', cardAction);
-        }
-        function cardAction (eo) {
-            eo = eo || window.event;
-            let gameElement = document.getElementById('g');
-            if (parseInt(gameElement.getAttribute('data-paused')) === 1) {
-                return;
-            }
-            eo.currentTarget.classList.toggle('active');
-            let data = eo.currentTarget.querySelector('div.b').getAttribute('data-f');
-
-            let check = gameElement.querySelectorAll('div.card.active').length;
-            if (check > 1) {
-                setTimeout(function () {
-                    let thisCards = gameElement.querySelectorAll('.active .b[data-f=' + data + ']');
-
-                    if (thisCards.length > 1) {
-                        currentGameState.matchCardsSound.play();
-                        thisCards = document.querySelectorAll('div.card.active');
-                        for (const thisCard of thisCards) {
-                            let result = true;
-                            for (const value of thisCard.classList) {
-                                if(value === 'twist')
-                                    result = false;
-                            }
-                            if(result){
-                                thisCard.classList.add('found');
-                                thisCard.classList.remove('active');
-                                thisCard.classList.remove('card');
-                                thisCard.innerHTML = '';
-                            }
-                        }
-                        check = 0;
-                        increaseScore('flip_matched');
-
-                        // Win game
-                        if (!document.querySelector('#g .card')) {
-                            let time = Date.now() - startGame;
-                            if (getValue('flip_' + difficulty) === '-:-' || getValue('flip_' + difficulty) > time) {
-                                // increase best score
-                                setLocalStorage('flip_' + difficulty, time);
-                            }
-
-                            currentGameState.startScreenText = 'cool'
-                            gameEnd();
-                            currentGameState.winGameSound.play();
-                        }
-                    }
-                    else {
-                        thisCards =  document.querySelectorAll('#g .card.active');
-                        for (const thisCard of thisCards) {
-                            thisCard.classList.remove('active');
-                        }
-                        increaseScore('flip_wrong');
-                    }
-                }, 401);
-            }
-        }
-
-        let elem = document.createElement('i');
-        elem.className += 'timer';
-        elem.style.animation = 'timer ' + timer + 'ms linear';
-        currentGameState.startScreenText = 'oops';
-        elem.addEventListener('animationend', switchToMain);
-
-        document.getElementById('g').prepend(elem);
-        
-        //pause & emergency exit
-        document.addEventListener('keyup' , pauseEsc);
-
-        currentGameState.touchStart = null;
-
-        //pause with touches & swipes left/right
-        window.addEventListener('touchstart', handelTouches);
-        window.addEventListener('touchend', touchEnd);
+        switchToState('Game');
     }
 
     function toggleCards(eo){
@@ -254,6 +153,7 @@ function memoGame() {
                 gameEnd();
                 break;
             case 'Game':
+                setGameField();
                 break;
         }
     }
@@ -354,7 +254,8 @@ function memoGame() {
         if(eo.touches.length === 1){
             //just one finger touched
             currentGameState.touchStart = eo.touches[0].screenX;
-        }else{
+        }
+        else{
             //a second finger hit the screen, abort the touch
             currentGameState.touchStart = null;
         }
@@ -376,6 +277,126 @@ function memoGame() {
 
     function switchToMain(){
         switchToState('Main');
+    }
+
+    function cardAction (eo) {
+        eo = eo || window.event;
+        let gameElement = document.getElementById('g');
+        if (parseInt(gameElement.getAttribute('data-paused')) === 1) {
+            return;
+        }
+        eo.currentTarget.classList.toggle('active');
+        let data = eo.currentTarget.querySelector('div.b').getAttribute('data-f');
+
+        let check = gameElement.querySelectorAll('div.card.active').length;
+        if (check > 1) {
+            setTimeout(function () {
+                let thisCards = gameElement.querySelectorAll('.active .b[data-f=' + data + ']');
+
+                if (thisCards.length > 1) {
+                    currentGameState.matchCardsSound.play();
+                    thisCards = document.querySelectorAll('div.card.active');
+                    for (const thisCard of thisCards) {
+                        let result = true;
+                        for (const value of thisCard.classList) {
+                            if(value === 'twist')
+                                result = false;
+                        }
+                        if(result){
+                            thisCard.classList.add('found');
+                            thisCard.classList.remove('active');
+                            thisCard.classList.remove('card');
+                            thisCard.innerHTML = '';
+                        }
+                    }
+                    check = 0;
+                    increaseScore('flip_matched');
+
+                    // Win game
+                    if (!document.querySelector('#g .card')) {
+                        let time = Date.now() - currentGameState.startGame;
+                        if (getValue('flip_' + currentGameState.difficulty) === '-:-'
+                            || getValue('flip_' + currentGameState.difficulty) > time) {
+                            // increase best score
+                            setLocalStorage('flip_' + currentGameState.difficulty, time);
+                        }
+
+                        currentGameState.startScreenText = 'cool'
+                        switchToState('Main');
+                        currentGameState.winGameSound.play();
+                    }
+                }
+                else {
+                    thisCards =  document.querySelectorAll('#g .card.active');
+                    for (const thisCard of thisCards) {
+                        thisCard.classList.remove('active');
+                    }
+                    increaseScore('flip_wrong');
+                }
+            }, 401);
+        }
+    }
+
+    function setDefaultGameObject(){
+        currentGameState.timer = currentGameState.defaultTimer;
+        currentGameState.startScreenText = currentGameState.defaultStartScreenText;
+        currentGameState.level = currentGameState.defaultLevel;
+        currentGameState.difficulty = currentGameState.defaultDifficulty;
+    }
+
+    function setGameField(){
+        playSound(currentGameState.currentGameAudio);
+        document.getElementById('g').className += currentGameState.difficulty;
+        document.querySelector('.logo').style.display = 'none';
+
+        currentGameState.startGame = Date.now();
+        let cards = [];
+
+        // Create and add shuffled cards to game
+        for (let i = 0; i < currentGameState.level; i++) {
+            cards.push(i);
+        }
+
+        let shuffled = shuffle([...cards, ...cards]);
+        let defaultCardSize = 100 / Math.sqrt(shuffled.length) - 1;
+
+        let gameElement = document.getElementById('g');
+
+        // Detect orientation change
+        let units = window.innerWidth > window.innerHeight ? "vh" : "vw";
+
+        for (let i = 0; i < shuffled.length; i++) {
+            let code = shuffled[i];
+            if (code < 10)
+                code = "0" + code;
+            if (code === 30)
+                code = 10;
+            if (code === 31)
+                code = 21;
+
+            gameElement.innerHTML +=
+                '<div class="card" style="width:' + defaultCardSize + units +';height:' + defaultCardSize + units +'">' +
+                '<div class="flipper">' +
+                '<div class="f"></div>' +
+                '<div class="b" data-f="&#xf0' + code + ';"></div>' +
+                '</div>' +
+                '</div>';
+        }
+
+        // Set card actions
+        let elements = document.querySelectorAll('#g .card');
+
+        for (let element = 0; element < elements.length; element++) {
+            elements[element].addEventListener('mousedown', cardAction);
+        }
+
+        let elem = document.createElement('i');
+        elem.className += 'timer';
+        elem.style.animation = 'timer ' + currentGameState.timer + 'ms linear';
+        currentGameState.startScreenText = 'memo';
+        elem.addEventListener('animationend', switchToMain);
+
+        document.getElementById('g').prepend(elem);
     }
 }
 

@@ -1,7 +1,7 @@
 const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 const ajaxDataName = 'Makarov_Memo_Statistic';
 
-export let gameStatisticDefault = {
+let gameStatisticDefault = {
     won:{
         key:'won',
         value: 0},
@@ -63,7 +63,7 @@ export let gameStatistic = {
         value: 0}
 }
 
-export let parsedStatistic;
+let parsedStatistic;
 
 
 export function readStatistic() {
@@ -93,20 +93,20 @@ function readStatisticReady(result) {
         insertStatistic();
     }
     else
-        console.log(result.error)
+        console.log('READ ' + result.error)
 }
 function errorHandler(jqXHR,statusStr,errorStr) {
     console.log(statusStr+' '+errorStr);
 }
 
-export function insertStatistic(){
+function insertStatistic(){
     $.ajax(ajaxHandlerScript, { type:'POST', dataType:'text',
         data:{f:'INSERT',n:ajaxDataName, v: JSON.stringify(gameStatisticDefault, null,1)},
         success:insertStatisticReady, error:errorHandler }
     );
 }
 function insertStatisticReady(result){
-    console.log(result.error)
+    console.log('INSERT ' + result.error)
 }
 
 let password;
@@ -125,7 +125,7 @@ function readyForUpdate() {
     });
 }
 function updateReady(result){
-    console.log('update Ready ' + result.error);
+    console.log('UPDATE ' + result.error);
 }
 
 let toTime = function (value) {

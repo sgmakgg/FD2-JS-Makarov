@@ -157,8 +157,8 @@ export function updateStats() {
         '</ul>' +
         '<ul>' +
         '<li>' +
-        '<b>Total Flips:</b> <span>' + parseInt((parseInt(gameStatistic.matched.value)
-            + parseInt(gameStatistic.wrong.value)) * 2) + '</span>' +
+        '<b>Total Flips:</b> <span>' + ((gameStatistic.matched.value
+            + gameStatistic.wrong.value) * 2) + '</span>' +
         '</li>' +
         '<li>' +
         '<b>Matched Flips:</b> <span>' + gameStatistic.matched.value + '</span>' +

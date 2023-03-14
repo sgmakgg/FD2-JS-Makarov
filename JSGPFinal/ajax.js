@@ -1,67 +1,11 @@
+import {GameStatistic} from './classes.js';
+
 const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 const ajaxDataName = 'Makarov_Memo_Statistic';
 
-let gameStatisticDefault = {
-    won:{
-        key:'won',
-        value: 0},
-    lost:{
-        key:'lost',
-        value: 0},
-    abandoned:{
-        key:'abandoned',
-        value: 0},
+let gameStatisticDefault = new GameStatistic().getMutedInstance();
 
-    //Best times
-    casual:{
-        key:'casual',
-        value: '-:-'},
-    medium:{
-        key:'medium',
-        value: '-:-'},
-    hard:{
-        key:'hard',
-        value: '-:-'},
-
-    //Cards stats
-    matched:{
-        key:'matched',
-        value: 0},
-    wrong:{
-        key:'wrong',
-        value: 0}
-}
-
-export let gameStatistic = {
-    won:{
-        key:'won',
-        value: 0},
-    lost:{
-        key:'lost',
-        value: 0},
-    abandoned:{
-        key:'abandoned',
-        value: 0},
-
-    //Best times
-    casual:{
-        key:'casual',
-        value: '-:-'},
-    medium:{
-        key:'medium',
-        value: '-:-'},
-    hard:{
-        key:'hard',
-        value: '-:-'},
-
-    //Cards stats
-    matched:{
-        key:'matched',
-        value: 0},
-    wrong:{
-        key:'wrong',
-        value: 0}
-}
+export let gameStatistic = new GameStatistic();
 
 let parsedStatistic;
 
@@ -125,7 +69,7 @@ function readyForUpdate() {
     });
 }
 function updateReady(result){
-    console.log('UPDATE ' + result.error);
+    console.log('UPDATE ' + 'errors: ' + result.error);
 }
 
 let toTime = function (value) {

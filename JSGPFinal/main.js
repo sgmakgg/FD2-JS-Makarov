@@ -4,7 +4,7 @@ import {
     updateStats,
     gameStatistic,
     updateStatistic
-} from './AJAX.js';
+} from './ajax.js';
 
 document.addEventListener('DOMContentLoaded', memoGame);
 function memoGame() {

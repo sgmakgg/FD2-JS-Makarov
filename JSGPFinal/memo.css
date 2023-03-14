@@ -247,4 +247,17 @@ a:hover{
         margin-left: auto;
         margin-right: auto}
     @keyframes timer {100% { width:99vw;}}
+
+    .b.contentbox.instructions{
+        font-size: 10px;
+    }
+
+    .b.contentbox.instructions h3{
+        margin-top: 5px;
+    }
+
+    .b.contentbox.instructions p{
+        margin-bottom: 0;
+        margin-top: 0;
+    }
 }

@@ -9,7 +9,6 @@ export let gameStatistic = new GameStatistic();
 
 let parsedStatistic;
 
-
 export function readStatistic() {
     $.ajax(ajaxHandlerScript, { type:'POST', dataType:'json',
         data:{f:'READ',n:ajaxDataName},
@@ -33,7 +32,7 @@ function readStatisticReady(result) {
             updateStats();
         }
     }
-    else if(result.result === ''){
+    else if(result.result === '' && result.error === undefined){
         insertStatistic();
     }
     else

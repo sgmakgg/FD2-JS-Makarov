@@ -21,7 +21,8 @@ function memoGame() {
         timer: 1000,
         level: 0,
         touchStart: null,
-        startGame: null
+        startGame: null,
+        hasDataLostConfirmed: false
     };
 
     currentGameState.currentGameAudio = new Audio('sounds/simple-funny-background-music-intro.mp3');
@@ -109,8 +110,9 @@ function memoGame() {
         return array;
     }
 
-    function beforeUnload(event) {
-        event.returnValue = "Data will be lost";
+    function beforeUnload(eo) {
+        if(currentGameState.pageName === "Game")
+            eo.returnValue = "Data will be lost";
     }
 
     function switchToState(newState) {
@@ -118,6 +120,11 @@ function memoGame() {
     }
 
     function switchToStateFromURLHash(){
+        if(currentGameState.pageName === 'Game' && !currentGameState.hasDataLostConfirmed)
+            alert('Current game data has been lost.')
+        
+        currentGameState.hasDataLostConfirmed = false;
+
         let URLHash=window.location.hash;
         let spaStateJson = decodeURIComponent(URLHash.substr(1));
 
@@ -201,7 +208,12 @@ function memoGame() {
                 //a left -> right swipe
             }
             if(end < currentGameState.touchStart - offset ){
-                switchToMain();
+                currentGameState.hasDataLostConfirmed = confirm("Current game data will be lost.");
+                if(currentGameState.hasDataLostConfirmed){
+                    currentGameState.startScreenText = 'main';
+                    switchToMain();
+                }
+
                 //a right -> left swipe
             }
         }
@@ -255,8 +267,11 @@ function memoGame() {
         }
 
         if (eo.key === 'Escape') {
-            currentGameState.startScreenText = 'main';
-            switchToMain();
+            currentGameState.hasDataLostConfirmed = confirm("Current game data will be lost.");
+            if(currentGameState.hasDataLostConfirmed){
+                currentGameState.startScreenText = 'main';
+                switchToMain();
+            }
         }
     }
 
@@ -348,6 +363,7 @@ function memoGame() {
         window.addEventListener('touchend', touchEnd);
         
         playSound(currentGameState.currentGameAudio);
+
         document.getElementById('g').className += currentGameState.difficulty;
         document.querySelector('.logo').style.display = 'none';
 

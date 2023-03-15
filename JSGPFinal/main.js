@@ -1,4 +1,5 @@
 import {soundInit, playSound} from './sounds.js';
+import {DefaultAppState} from './classes.js'
 import {
     readStatistic,
     updateStats,
@@ -13,17 +14,11 @@ function memoGame() {
     if ("ontouchstart" in window)
         document.querySelector('#touches').innerHTML = 'Touches are supporting';
 
-    switchToState('Main');
-    window.onhashchange = switchToStateFromURLHash;
-
     let currentGameState = {
-        defaultStartScreenText: 'memo',
+        pageName: '',
         startScreenText: 'memo',
-        defaultDifficulty: '',
         difficulty: '',
-        defaultTimer: 1000,
         timer: 1000,
-        defaultLevel: 0,
         level: 0,
         touchStart: null,
         startGame: null
@@ -38,6 +33,9 @@ function memoGame() {
     currentGameState.winGameSound = new Audio("sounds/funny-blowing-trumpet-sound-effect.mp3");
     soundInit(currentGameState.winGameSound);
 
+    switchToStateFromURLHash();
+    window.onhashchange = switchToStateFromURLHash;
+
     // Toggle start screen cards
     document.querySelectorAll('.logo .card').forEach(
         (element) => {
@@ -50,15 +48,6 @@ function memoGame() {
 
         setDefaultGameObject();
 
-        window.addEventListener("beforeunload", beforeUnload);
-
-        //pause & emergency exit
-        document.addEventListener('keyup' , pauseEsc);
-
-        //pause with touches & swipes left/right
-        window.addEventListener('touchstart', handelTouches);
-        window.addEventListener('touchend', touchEnd);
-
         gameStatistic.abandoned.value++;
 
         document.querySelector('.info').style.display = 'none';
@@ -68,19 +57,22 @@ function memoGame() {
         // Set game timer and difficulty
         if (currentGameState.level === 8) {
             currentGameState.difficulty = 'casual';
-            currentGameState.timer *= currentGameState.level * 6;
+            currentGameState.timer *= (currentGameState.level * 6);
         }
         else if (currentGameState.level === 18) {
             currentGameState.difficulty = 'medium';
-            currentGameState.timer *= currentGameState.level * 6;
+            currentGameState.timer *= (currentGameState.level * 6);
         }
         else if (currentGameState.level === 32) {
             currentGameState.difficulty = 'hard';
-            currentGameState.timer *= currentGameState.level * 6;
+            currentGameState.timer *= (currentGameState.level * 6);
         }
 
-        switchToState('Game');
-    }
+        switchToGame({pageName: 'Game',
+                                level: currentGameState.level,
+                                difficulty: currentGameState.difficulty,
+                                timer: currentGameState.timer});
+        }
 
     function toggleCards(eo){
         eo = eo || window.event;
@@ -122,17 +114,25 @@ function memoGame() {
     }
 
     function switchToState(newState) {
-        location.hash = newState;
+        location.hash = encodeURIComponent(JSON.stringify(newState));
     }
 
     function switchToStateFromURLHash(){
         let URLHash=window.location.hash;
-        let stateStr = URLHash.substr(1);
+        let spaStateJson = decodeURIComponent(URLHash.substr(1));
 
-        if ( stateStr === "" )
-            stateStr ='Main';
+        if ( spaStateJson !== "" ){
+            let parsed = JSON.parse(spaStateJson);
+            for (const parsedKey in parsed) {
+                if(parsedKey in currentGameState){
+                    currentGameState[parsedKey] = parsed[parsedKey];
+                }
+            }
+        }
+        else
+            currentGameState.pageName ='Main';
 
-        switch (stateStr) {
+        switch (currentGameState.pageName) {
             case 'Main':
                 gameEnd();
                 updateStatistic();
@@ -201,7 +201,7 @@ function memoGame() {
                 //a left -> right swipe
             }
             if(end < currentGameState.touchStart - offset ){
-                switchToState('Main');
+                switchToMain();
                 //a right -> left swipe
             }
         }
@@ -256,13 +256,18 @@ function memoGame() {
 
         if (eo.key === 'Escape') {
             currentGameState.startScreenText = 'main';
-            switchToState('Main');
+            switchToMain();
         }
     }
 
     function switchToMain(){
-        switchToState('Main');
+        switchToState({pageName: 'Main'});
     }
+
+    function switchToGame(currentGameState) {
+        switchToState( currentGameState );
+    }
+
 
     function cardAction (eo) {
         eo = eo || window.event;
@@ -308,7 +313,7 @@ function memoGame() {
                         }
 
                         currentGameState.startScreenText = 'cool'
-                        switchToState('Main');
+                        switchToMain();
                         currentGameState.winGameSound.play();
                     }
                 }
@@ -325,13 +330,23 @@ function memoGame() {
     }
 
     function setDefaultGameObject(){
-        currentGameState.timer = currentGameState.defaultTimer;
-        currentGameState.startScreenText = currentGameState.defaultStartScreenText;
-        currentGameState.level = currentGameState.defaultLevel;
-        currentGameState.difficulty = currentGameState.defaultDifficulty;
+        let defaultState = new DefaultAppState();
+        currentGameState.timer = defaultState.defaultTimer;
+        currentGameState.startScreenText = defaultState.defaultStartScreenText;
+        currentGameState.level = defaultState.defaultLevel;
+        currentGameState.difficulty = defaultState.defaultDifficulty;
     }
 
     function setGameField(){
+        window.addEventListener("beforeunload", beforeUnload);
+
+        //pause & emergency exit
+        document.addEventListener('keyup' , pauseEsc);
+
+        //pause with touches & swipes left/right
+        window.addEventListener('touchstart', handelTouches);
+        window.addEventListener('touchend', touchEnd);
+        
         playSound(currentGameState.currentGameAudio);
         document.getElementById('g').className += currentGameState.difficulty;
         document.querySelector('.logo').style.display = 'none';

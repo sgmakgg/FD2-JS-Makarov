@@ -58,3 +58,25 @@ class GameStatisticDefault{
         return this._wrong
     }
 }
+
+export class DefaultAppState{
+    constructor() {
+        this._defaultStartScreenText = 'memo';
+        this._defaultDifficulty = '';
+        this._defaultTimer = 1000;
+        this._defaultLevel = 0;
+    }
+
+    get defaultStartScreenText(){
+        return this._defaultStartScreenText = 'memo';
+    }
+    get defaultDifficulty(){
+        return this._defaultDifficulty = '';
+    }
+    get defaultTimer(){
+        return this._defaultTimer = 1000;
+    }
+    get defaultLevel(){
+        return this._defaultLevel = 0;
+    }
+}

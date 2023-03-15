@@ -328,6 +328,7 @@ function memoGame() {
                         }
 
                         currentGameState.startScreenText = 'cool'
+                        currentGameState.hasDataLostConfirmed = true;
                         switchToMain();
                         currentGameState.winGameSound.play();
                     }

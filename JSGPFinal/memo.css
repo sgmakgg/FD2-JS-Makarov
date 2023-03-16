@@ -250,10 +250,12 @@ a:hover{
 
     .b.contentbox.instructions{
         font-size: 10px;
+        text-justify: auto;
     }
 
     .b.contentbox.instructions h3{
         margin-top: 5px;
+        margin-bottom: 5px;
     }
 
     .b.contentbox.instructions p{

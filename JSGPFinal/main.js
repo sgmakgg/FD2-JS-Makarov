@@ -16,6 +16,7 @@ function memoGame() {
 
     let currentGameState = {
         pageName: '',
+        previousPageName: '',
         startScreenText: 'memo',
         difficulty: '',
         timer: 1000,
@@ -80,9 +81,47 @@ function memoGame() {
 
         let currentElement = eo.currentTarget;
 
-        let siblings = currentElement.parentNode.children;
+        if (this.id === 'statistic' &&
+            (currentGameState.pageName === 'Main' || currentGameState.pageName === 'Rules')){
+            switchToStatistic();
+        }
+        else if(this.id === 'statistic' && currentGameState.pageName === 'Statistic'){
+            currentGameState.previousPageName = currentGameState.pageName;
+            switchToMain();
+        }
+        else if(this.id === 'rules' &&
+            (currentGameState.pageName === 'Main' || currentGameState.pageName === 'Statistic')){
+            switchToRules();
+        }
+        else if(this.id === 'rules' && currentGameState.pageName === 'Rules'){
+            currentGameState.previousPageName = currentGameState.pageName;
+            switchToMain();
+        }
+        else if(this.id === 'choice' && currentGameState.previousPageName !== 'Choice'){
+            switchToChoice();
+        }
+        else if(this.id === 'statistic' && currentGameState.previousPageName === 'Choice'){
+            currentGameState.previousPageName = '';
+            activeClassSwitcher(document.querySelector('div#choice.card.active'));
+            switchToStatistic();
+        }
+        else if(this.id === 'rules' && currentGameState.previousPageName === 'Choice'){
+            currentGameState.previousPageName = '';
+            activeClassSwitcher(document.querySelector('div#choice.card.active'));
+            switchToRules();
+        }
+        else{
+            if(currentGameState.previousPageName === 'Choice'){
+                currentGameState.previousPageName = '';
+            }
+            activeClassSwitcher(currentElement);
+        }
+    }
+
+    function activeClassSwitcher(element){
+        let siblings = element.parentNode.children;
         for(let sibling = 0; sibling < siblings.length; sibling++){
-            let result = JSON.stringify(siblings[sibling].classList) === JSON.stringify(currentElement.classList);
+            let result = JSON.stringify(siblings[sibling].classList) === JSON.stringify(element.classList);
             let res1 = siblings[sibling].classList.contains('twist');
             if( !result){
                 if(!res1)
@@ -90,7 +129,7 @@ function memoGame() {
             }
         }
 
-        eo.currentTarget.classList.toggle('active');
+        element.classList.toggle('active');
     }
 
     let elements = document.getElementsByClassName('play');
@@ -119,6 +158,25 @@ function memoGame() {
         location.hash = encodeURIComponent(JSON.stringify(newState));
     }
 
+    function switchToMain(){
+        switchToState({pageName: 'Main'});
+    }
+
+    function switchToGame(currentGameState) {
+        switchToState( currentGameState );
+    }
+
+    function switchToStatistic(){
+        switchToState({pageName: 'Statistic'});
+    }
+    function switchToChoice(){
+        switchToState({pageName: 'Choice'});
+    }
+
+    function switchToRules(){
+        switchToState({pageName: 'Rules'});
+    }
+
     function switchToStateFromURLHash(){
         if(currentGameState.pageName === 'Game' && !currentGameState.hasDataLostConfirmed)
             alert('Current game data has been lost.')
@@ -141,11 +199,35 @@ function memoGame() {
 
         switch (currentGameState.pageName) {
             case 'Main':
+                if(currentGameState.previousPageName === 'Statistic'){
+                    currentGameState.previousPageName = '';
+                    activeClassSwitcher(document.querySelector('div#statistic.card.left.active'));
+                }
+                if (currentGameState.previousPageName === 'Rules'){
+                    currentGameState.previousPageName = '';
+                    activeClassSwitcher(document.querySelector('div#rules.card.left.active'));
+                }
+                if (currentGameState.previousPageName === 'Choice'){
+                    currentGameState.previousPageName = '';
+                    activeClassSwitcher(document.querySelector('div#choice.card.active'));
+                }
                 gameEnd();
                 updateStatistic();
                 break;
             case 'Game':
                 setGameField();
+                break;
+            case 'Statistic':
+                readStatistic();
+                if(currentGameState)
+                activeClassSwitcher(document.querySelector('div#statistic.card.left'));
+                break;
+            case 'Rules':
+                activeClassSwitcher(document.querySelector('div#rules.card.left'));
+                break;
+            case 'Choice':
+                currentGameState.previousPageName = 'Choice';
+                activeClassSwitcher(document.querySelector('div#choice.card'));
                 break;
         }
     }
@@ -274,15 +356,6 @@ function memoGame() {
             }
         }
     }
-
-    function switchToMain(){
-        switchToState({pageName: 'Main'});
-    }
-
-    function switchToGame(currentGameState) {
-        switchToState( currentGameState );
-    }
-
 
     function cardAction (eo) {
         eo = eo || window.event;

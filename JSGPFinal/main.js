@@ -227,6 +227,8 @@ function memoGame() {
                 break;
             case 'Choice':
                 currentGameState.previousPageName = 'Choice';
+                gameEnd();
+                updateStatistic();
                 activeClassSwitcher(document.querySelector('div#choice.card'));
                 break;
         }

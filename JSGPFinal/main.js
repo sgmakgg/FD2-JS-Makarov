@@ -45,6 +45,13 @@ function memoGame() {
                             element.addEventListener('click', toggleCards);
                         });
 
+
+
+    let elements = document.getElementsByClassName('play');
+    for (let element = 0; element < elements.length; element++) {
+        elements[element].addEventListener('click', startCurrentGame);
+    }
+
     function startCurrentGame (eo) {
         eo = eo || window.event;
 
@@ -71,10 +78,10 @@ function memoGame() {
         }
 
         switchToGame({pageName: 'Game',
-                                level: currentGameState.level,
-                                difficulty: currentGameState.difficulty,
-                                timer: currentGameState.timer});
-        }
+            level: currentGameState.level,
+            difficulty: currentGameState.difficulty,
+            timer: currentGameState.timer});
+    }
 
     function toggleCards(eo){
         eo = eo || window.event;
@@ -131,12 +138,6 @@ function memoGame() {
 
         element.classList.toggle('active');
     }
-
-    let elements = document.getElementsByClassName('play');
-    for (let element = 0; element < elements.length; element++) {
-        elements[element].addEventListener('click', startCurrentGame);
-    }
-
     function shuffle(array) {
         let currentIndex = array.length, temporaryValue, randomIndex;
         while (0 !== currentIndex) {
@@ -212,15 +213,13 @@ function memoGame() {
                     activeClassSwitcher(document.querySelector('div#choice.card.active'));
                 }
                 gameEnd();
-                updateStatistic();
                 break;
             case 'Game':
                 setGameField();
                 break;
             case 'Statistic':
-                readStatistic();
                 if(currentGameState)
-                activeClassSwitcher(document.querySelector('div#statistic.card.left'));
+                    activeClassSwitcher(document.querySelector('div#statistic.card.left'));
                 break;
             case 'Rules':
                 activeClassSwitcher(document.querySelector('div#rules.card.left'));
@@ -228,7 +227,6 @@ function memoGame() {
             case 'Choice':
                 currentGameState.previousPageName = 'Choice';
                 gameEnd();
-                updateStatistic();
                 activeClassSwitcher(document.querySelector('div#choice.card'));
                 break;
         }
@@ -250,12 +248,18 @@ function memoGame() {
         if (text === 'cool') {
             gameStatistic.won.value++;
             gameStatistic.abandoned.value--;
+            updateStatistic();
         }
 
         // If lost game
         else if (text === 'oops') {
             gameStatistic.lost.value++;
             gameStatistic.abandoned.value--;
+            updateStatistic();
+        }
+
+        else if (text === 'main') {
+            updateStatistic();
         }
 
         updateStats();
@@ -297,7 +301,6 @@ function memoGame() {
                     currentGameState.startScreenText = 'main';
                     switchToMain();
                 }
-
                 //a right -> left swipe
             }
         }

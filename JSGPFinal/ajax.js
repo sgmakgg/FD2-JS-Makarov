@@ -9,66 +9,92 @@ export let gameStatistic = new GameStatistic();
 
 let parsedStatistic;
 
-export function readStatistic() {
-    $.ajax(ajaxHandlerScript, { type:'POST', dataType:'json',
-        data:{f:'READ',n:ajaxDataName},
-        success:readStatisticReady, error:errorHandler }
-    );
-}
-function readStatisticReady(result) {
-    if(result.error === undefined && result.result !== ''){
-        parsedStatistic = JSON.parse(result.result);
-        gameStatistic.won.value = parsedStatistic.won.value;
-        gameStatistic.lost.value = parsedStatistic.lost.value;
-        gameStatistic.abandoned.value = parsedStatistic.abandoned.value;
-        gameStatistic.casual.value = parsedStatistic.casual.value;
-        gameStatistic.medium.value = parsedStatistic.medium.value;
-        gameStatistic.hard.value = parsedStatistic.hard.value;
-        gameStatistic.matched.value = parsedStatistic.matched.value;
-        gameStatistic.wrong.value = parsedStatistic.wrong.value;
+export async function readStatistic() {
+    let postBody = new URLSearchParams();
+    postBody.append('f', 'READ');
+    postBody.append('n', ajaxDataName);
 
-        // Fill stats
-        if (gameStatistic.won.value > 0 || gameStatistic.lost.value > 0 || gameStatistic.abandoned.value > 0) {
-            updateStats();
+    try {
+        const response = await fetch(ajaxHandlerScript, {method: 'post', body: postBody});
+        const serverResponseCode = response.status;
+        console.log('READ Response: ' + serverResponseCode);
+        if(serverResponseCode === 200){
+            const data = await response.json();
+            if(data.result !== '')
+                mapData(data);
+            else
+                await insertStatistic();
         }
     }
-    else if(result.result === '' && result.error === undefined){
-        insertStatistic();
+    catch(error){
+        console.error(error);
     }
-    else
-        console.log('READ ' + result.error)
-}
-function errorHandler(jqXHR,statusStr,errorStr) {
-    console.log(statusStr+' '+errorStr);
 }
 
-function insertStatistic(){
-    $.ajax(ajaxHandlerScript, { type:'POST', dataType:'text',
-        data:{f:'INSERT',n:ajaxDataName, v: JSON.stringify(gameStatisticDefault, null,1)},
-        success:insertStatisticReady, error:errorHandler }
-    );
+function mapData(result) {
+    parsedStatistic = JSON.parse(result.result);
+    gameStatistic.won.value = parsedStatistic.won.value;
+    gameStatistic.lost.value = parsedStatistic.lost.value;
+    gameStatistic.abandoned.value = parsedStatistic.abandoned.value;
+    gameStatistic.casual.value = parsedStatistic.casual.value;
+    gameStatistic.medium.value = parsedStatistic.medium.value;
+    gameStatistic.hard.value = parsedStatistic.hard.value;
+    gameStatistic.matched.value = parsedStatistic.matched.value;
+    gameStatistic.wrong.value = parsedStatistic.wrong.value;
 }
-function insertStatisticReady(result){
-    console.log('INSERT ' + result.error)
+
+export async function insertStatistic() {
+    let json = JSON.stringify(gameStatisticDefault, null, 1);
+    let postBody = new URLSearchParams();
+    postBody.append('f', 'INSERT');
+    postBody.append('n', ajaxDataName);
+    postBody.append('v', json);
+
+    const response = await fetch(ajaxHandlerScript, {method: 'post', body: postBody});
+    const serverResponseCode = response.status;
+    if (serverResponseCode === 200) {
+        console.log('INSERT status: ' + serverResponseCode);
+    }
 }
 
 let password;
-export function updateStatistic(){
+export async function updateStatistic() {
     password = Math.random();
-    $.ajax(ajaxHandlerScript, { type:'POST', dataType:'text',
-        data:{f:'LOCKGET',n:ajaxDataName, p:password},
-        success:readyForUpdate, error:errorHandler }
-    );
+    let postBody = new URLSearchParams();
+    postBody.append('f', 'LOCKGET');
+    postBody.append('n', ajaxDataName);
+    postBody.append('p', password);
+    try {
+        const response = await fetch(ajaxHandlerScript, {method: 'post', body: postBody});
+        const serverResponseCode = response.status;
+        console.log('LOCKGET Response: ' + serverResponseCode);
+        if(serverResponseCode === 200){
+            const data = await response.json();
+            let json;
+            if(data.result === ''){
+                json = JSON.stringify(gameStatisticDefault, null, 1);
+                await readyForUpdate(json);
+            }
+            else{
+                json = JSON.stringify(gameStatistic, null, 1);
+                await readyForUpdate(json);
+            }
+        }
+    }
+    catch(error){
+        console.error(error);
+    }
 }
-function readyForUpdate() {
-    $.ajax(ajaxHandlerScript, {
-        type: 'POST', dataType: 'text',
-        data: {f: 'UPDATE', n: ajaxDataName, p: password, v: JSON.stringify(gameStatistic, null,1)},
-        success: updateReady, error: errorHandler
-    });
-}
-function updateReady(result){
-    console.log('UPDATE ' + 'errors: ' + result.error);
+
+async function readyForUpdate(json) {
+    let postBody = new URLSearchParams();
+    postBody.append('f', 'UPDATE');
+    postBody.append('n', ajaxDataName);
+    postBody.append('p', password);
+    postBody.append('v', json);
+    const response = await fetch(ajaxHandlerScript, {method: 'post', body: postBody});
+    if(response.status === 200)
+        console.log('UPDATE Response: ' + response.status);
 }
 
 let toTime = function (value) {
